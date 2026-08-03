@@ -337,6 +337,7 @@ model User {
   auditLogs               AuditLog[]
 
   @@index([createdAt])
+  @@map("user")
 }
 
 model Session {
@@ -352,6 +353,7 @@ model Session {
 
   @@index([userId])
   @@index([createdAt])
+  @@map("session")
 }
 
 model Account {
@@ -373,6 +375,7 @@ model Account {
   @@unique([providerId, accountId])
   @@index([userId])
   @@index([createdAt])
+  @@map("account")
 }
 
 model Verification {
@@ -385,6 +388,7 @@ model Verification {
 
   @@index([identifier])
   @@index([createdAt])
+  @@map("verification")
 }
 
 model Organization {
