@@ -1,4 +1,4 @@
-FROM node:22.18.0-alpine AS dependencies
+FROM node:22-slim AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json turbo.json tsconfig.base.json ./
 COPY apps/web/package.json apps/web/package.json
@@ -8,9 +8,9 @@ RUN npm ci
 
 FROM dependencies AS builder
 COPY . .
-RUN npm run db:generate && npm run build --workspace @yokosocial/web
+RUN npx turbo run build --filter=@yokosocial/web...
 
-FROM node:22.18.0-alpine AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
