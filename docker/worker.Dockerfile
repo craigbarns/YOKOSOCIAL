@@ -11,7 +11,7 @@ COPY packages packages
 RUN npm install
 
 COPY apps/worker apps/worker
-RUN npm run db:generate && npm run build --workspace @yokosocial/worker
+RUN npx turbo run build --filter=@yokosocial/worker...
 
 USER pwuser
 CMD ["npm", "run", "start", "--workspace", "@yokosocial/worker"]
