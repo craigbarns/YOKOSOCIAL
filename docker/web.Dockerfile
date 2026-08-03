@@ -1,6 +1,6 @@
 FROM node:22-slim AS dependencies
 WORKDIR /app
-COPY package.json package-lock.json turbo.json tsconfig.base.json ./
+COPY package.json turbo.json tsconfig.base.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY apps/worker/package.json apps/worker/package.json
 COPY packages packages
