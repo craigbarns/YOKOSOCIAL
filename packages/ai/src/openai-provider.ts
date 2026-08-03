@@ -119,7 +119,7 @@ export class OpenAIContentGenerationProvider implements ContentGenerationProvide
       reasoning: { effort: this.reasoningEffort },
       max_output_tokens: 10_000,
       instructions: [
-        "Rôle : agent éditorial de YokoSushi.",
+        `Rôle : agent éditorial de la marque ${request.brand?.name ?? "FeedPulse"}.`,
         "Objectif : produire exactement le nombre demandé de propositions naturelles en français.",
         "Contraintes factuelles : utilise exclusivement les établissements, produits, prix, services et médias fournis. N’invente jamais de produit, prix, promotion, adresse, téléphone, horaire, service, événement, réduction, urgence ou avis client.",
         "Les produits fournis ont déjà été filtrés selon les établissements sélectionnés. Une liste vide signifie qu’aucune disponibilité locale n’est validée : ne cite alors aucun produit précis et reste sur la marque, l’ambiance ou une invitation à consulter la carte.",
