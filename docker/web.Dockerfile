@@ -1,3 +1,4 @@
+# cache-bust: v2
 FROM node:22-slim AS dependencies
 WORKDIR /app
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
@@ -23,4 +24,5 @@ COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
 COPY --chown=node:node --from=builder /app/packages/database ./packages/database
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 USER node
-CMD ["sh", "-c", "npx prisma db push --schema=packages/database/prisma/schema.prisma && node apps/web/server.js"]
+CMD ["sh", "-c", "echo 'Running prisma db push...' && npx prisma db push --schema=packages/database/prisma/schema.prisma --accept-data-loss && echo 'DB push complete! Starting server...' && node apps/web/server.js"]
+
