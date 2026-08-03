@@ -22,4 +22,4 @@ COPY --chown=node:node --from=builder /app/packages/database/prisma ./packages/d
 COPY --chown=node:node --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --chown=node:node --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 USER node
-CMD ["sh", "-c", "./node_modules/.bin/prisma db push --schema=packages/database/prisma/schema.prisma && node apps/web/server.js"]
+CMD ["node", "apps/web/server.js"]

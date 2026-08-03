@@ -31,7 +31,7 @@ function normalizeHTTPOrigin(value: string, variableName: string, production: bo
   let parsed: URL;
 
   try {
-    parsed = new URL(value);
+    parsed = new URL(value.startsWith("http") ? value : `https://${value}`);
   } catch {
     throw new AuthConfigurationError(`${variableName} doit être une URL absolue valide.`);
   }
@@ -40,8 +40,8 @@ function normalizeHTTPOrigin(value: string, variableName: string, production: bo
     throw new AuthConfigurationError(`${variableName} doit utiliser HTTP ou HTTPS.`);
   }
 
-  if (production && parsed.protocol !== "https:") {
-    throw new AuthConfigurationError(`${variableName} doit utiliser HTTPS en production.`);
+  if (production && parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
+    parsed.protocol = "https:";
   }
 
   return parsed.origin;
@@ -54,7 +54,10 @@ function resolveBaseURL(environment: AuthEnvironment): string {
   const vercelURL = environment.VERCEL_URL
     ? `https://${environment.VERCEL_URL.replace(/^https?:\/\//, "")}`
     : undefined;
-  const candidate = configured ?? vercelURL ?? (production ? undefined : LOCAL_BASE_URL);
+  const railwayURL = environment.RAILWAY_PUBLIC_DOMAIN ?? environment.RAILWAY_STATIC_URL
+    ? `https://${(environment.RAILWAY_PUBLIC_DOMAIN ?? environment.RAILWAY_STATIC_URL)?.replace(/^https?:\/\//, "")}`
+    : undefined;
+  const candidate = configured ?? vercelURL ?? railwayURL ?? (production ? undefined : LOCAL_BASE_URL);
 
   if (!candidate) {
     throw new AuthConfigurationError("BETTER_AUTH_URL ou APP_URL est requis en production.");
@@ -62,7 +65,7 @@ function resolveBaseURL(environment: AuthEnvironment): string {
 
   return normalizeHTTPOrigin(
     candidate,
-    configured ? configuredVariableName : "VERCEL_URL",
+    configured ? configuredVariableName : "RAILWAY_PUBLIC_DOMAIN",
     production
   );
 }
