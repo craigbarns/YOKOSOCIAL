@@ -1,0 +1,10 @@
+@font-face {
+  font-family: Fixture;
+  src: url("/frontend/fonts/fixture.woff2");
+}
+.ambiance {
+  background: center / cover url("../img/ambiance.jpg");
+}
+.external {
+  background-image: url("https://cdn.example.test/external-promo.png");
+}

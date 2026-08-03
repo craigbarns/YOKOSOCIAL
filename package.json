@@ -1,0 +1,54 @@
+{
+  "name": "yokosushi-social-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent social media indépendant pour YokoSushi",
+  "license": "UNLICENSED",
+  "packageManager": "npm@10.8.2",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0 <25"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "overrides": {
+    "postcss": "8.5.25",
+    "sharp": "0.35.3",
+    "next": {
+      "postcss": "8.5.25",
+      "sharp": "0.35.3"
+    }
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:web": "npm run dev --workspace @yokosocial/web",
+    "dev:worker": "npm run dev --workspace @yokosocial/worker",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "playwright test",
+    "db:generate": "npm run db:generate --workspace @yokosocial/database",
+    "db:migrate": "npm run db:migrate --workspace @yokosocial/database",
+    "db:deploy": "npm run db:deploy --workspace @yokosocial/database",
+    "db:seed": "npm run db:seed --workspace @yokosocial/database",
+    "db:studio": "npm run db:studio --workspace @yokosocial/database",
+    "check": "npm run lint && npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@playwright/test": "1.62.1",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.0",
+    "turbo": "^2.5.0",
+    "typescript-eslint": "^8.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
+  }
+}

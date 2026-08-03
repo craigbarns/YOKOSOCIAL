@@ -1,0 +1,37 @@
+{
+  "model": [
+    {
+      "id": 1,
+      "nom_boutique": "YokoSushi Compans",
+      "tel": "05 62 308 014",
+      "geo_area": "[[1.43,43.61],[1.44,43.62],[1.45,43.60]]",
+      "updated_at": "2026-01-10 09:00:00",
+      "adresse": {
+        "num_rue": "8",
+        "rue": "Esplanade Compans Caffarelli",
+        "code_postal": "31000",
+        "ville": "Toulouse",
+        "pays": "France",
+        "designation": "8 Esplanade Compans Caffarelli, Toulouse, France",
+        "latitude": "1.4348",
+        "longitude": "43.6107"
+      }
+    },
+    {
+      "id": 2,
+      "nom_boutique": "YokoSushi Péri",
+      "tel": "05 62 730 431",
+      "geo_area": "[[1.45,43.60],[1.46,43.61],[1.47,43.59]]",
+      "adresse": {
+        "num_rue": "12",
+        "rue": "Rue Gabriel Péri",
+        "code_postal": "31000",
+        "ville": "Toulouse",
+        "pays": "France",
+        "designation": "12 Rue Gabriel Péri, Toulouse, France",
+        "latitude": "1.4511",
+        "longitude": "43.6057"
+      }
+    }
+  ]
+}

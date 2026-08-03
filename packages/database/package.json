@@ -1,0 +1,42 @@
+{
+  "name": "@yokosocial/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./tenant": "./src/tenant.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "check:database-url": "tsx scripts/require-database-url.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "npm run check:database-url && prisma migrate dev",
+    "db:deploy": "npm run check:database-url && prisma migrate deploy",
+    "db:push": "npm run check:database-url && prisma db push",
+    "db:seed": "npm run check:database-url && prisma db seed",
+    "db:studio": "npm run check:database-url && prisma studio",
+    "format": "prisma format",
+    "lint": "eslint src scripts prisma/seed.ts prisma.config.ts --ignore-pattern src/generated/** --max-warnings=0",
+    "lint:fix": "npm run lint -- --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.0",
+    "dotenv": "^17.0.0",
+    "prisma": "^7.9.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
+  }
+}

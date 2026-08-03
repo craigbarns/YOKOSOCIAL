@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <title>YokoSushi — fixture</title>
+    <meta name="description" content="Contenu de test hors ligne" />
+    <meta property="og:title" content="YokoSushi fixture" />
+    <meta property="og:image" content="http://dev.yokosushi.fr/frontend/img/og.jpg" />
+    <link rel="stylesheet" href="/frontend/css/site.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "logo": "/frontend/img/logo.png",
+        "image": { "contentUrl": "/frontend/img/brand-photo.jpg" }
+      }
+    </script>
+    <script type="application/ld+json">
+      { invalid json }
+    </script>
+    <style>
+      .hero {
+        background-image: url("/frontend/img/hero.jpg");
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/restaurants">Nos restaurants</a>
+    <a href="/admin/produit">Administration</a>
+    <a href="https://www.facebook.com/YokoSushiToulouse/">Facebook</a>
+    <img src="/frontend/img/logo.png" alt="Logo YokoSushi" />
+    <img src="/frontend/img/mobile/hamburger.png" alt="" />
+    <img
+      src="/images/plateau-small.jpg"
+      srcset="/images/plateau-small.jpg 480w, /images/plateau-large.jpg 1200w"
+      alt="Plateau de démonstration"
+    />
+    <img data-src="/images/lazy-sushi.webp" title="Sushi lazy" />
+    <picture>
+      <source srcset="/images/restaurant-peri.webp 1x, /images/restaurant-peri@2x.webp 2x" />
+      <img src="/images/restaurant-peri.jpg" alt="Restaurant Péri" />
+    </picture>
+    <div style="background-image: url(&quot;/frontend/img/slider-resto/Compans-1.jpg&quot;)"></div>
+  </body>
+</html>

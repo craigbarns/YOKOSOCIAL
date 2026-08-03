@@ -1,0 +1,52 @@
+{
+  "model": {
+    "id": 10,
+    "lib_famille": "Sushis",
+    "titre": "Les essentiels",
+    "description": "Canapé de riz et poisson",
+    "photo": "https://image.ibb.co/external/category.jpg",
+    "index": 1,
+    "updated_at": "2026-01-10 09:00:00",
+    "produits": [
+      {
+        "id": 94,
+        "famille_id": 10,
+        "designation": "Sushi Saumon",
+        "prix": 2.1,
+        "description": "1 pièce",
+        "piece": "1 pièce",
+        "photo": "images/sushi-saumon.png",
+        "cacher": 0,
+        "deleted_at": null,
+        "updated_at": "2025-12-15 00:06:46",
+        "effective_prix_promo": null,
+        "offer_badges": [],
+        "composants": [{ "id": 74, "lib_composant": "Poissons" }]
+      },
+      {
+        "id": 272,
+        "famille_id": 10,
+        "designation": "Produit masqué",
+        "prix": 3.8,
+        "description": "Ne doit pas être importé",
+        "piece": "1 pièce",
+        "photo": "images/hidden.png",
+        "cacher": 1,
+        "deleted_at": null,
+        "offer_badges": [],
+        "composants": []
+      },
+      {
+        "id": 273,
+        "famille_id": 10,
+        "designation": "Produit supprimé",
+        "prix": 4.2,
+        "photo": "images/deleted.png",
+        "cacher": 0,
+        "deleted_at": "2026-01-01 00:00:00",
+        "offer_badges": [],
+        "composants": []
+      }
+    ]
+  }
+}

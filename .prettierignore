@@ -1,0 +1,10 @@
+node_modules
+.next
+**/.next
+dist
+**/dist
+coverage
+**/coverage
+packages/database/src/generated
+playwright-report
+test-results

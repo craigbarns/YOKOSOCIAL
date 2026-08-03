@@ -1,0 +1,1328 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  EDITOR
+  REVIEWER
+  VIEWER
+}
+
+enum EstablishmentStatus {
+  ACTIVE
+  INACTIVE
+  NEEDS_REVIEW
+  ARCHIVED
+}
+
+enum SocialPlatform {
+  INSTAGRAM
+  FACEBOOK
+}
+
+enum SocialAccountStatus {
+  DISCONNECTED
+  CONNECTED
+  EXPIRED
+  ERROR
+}
+
+enum WebsiteImportMode {
+  REAL
+  MOCK
+  DEMO
+}
+
+enum WebsiteImportStatus {
+  PENDING
+  CRAWLING
+  ANALYZING
+  WAITING_FOR_REVIEW
+  IMPORTING
+  COMPLETED
+  PARTIALLY_COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum WebsitePageStatus {
+  DISCOVERED
+  FETCHING
+  FETCHED
+  ANALYZED
+  PARTIAL
+  SKIPPED
+  FAILED
+}
+
+enum WebsitePageType {
+  HOME
+  MENU
+  CATEGORY
+  PRODUCT
+  ESTABLISHMENT
+  CONTACT
+  ORDER
+  PROMOTION
+  SITEMAP
+  OTHER
+}
+
+enum ImportedDataType {
+  BRAND
+  LOGO
+  BRAND_TEXT
+  ESTABLISHMENT
+  ADDRESS
+  PHONE
+  BUSINESS_HOURS
+  SERVICE
+  ORDER_LINK
+  RESERVATION_LINK
+  SOCIAL_LINK
+  PRODUCT_CATEGORY
+  PRODUCT
+  PRICE
+  ALLERGEN
+  PROMOTION
+  OTHER
+}
+
+enum DataValidationStatus {
+  UNREVIEWED
+  APPROVED
+  REJECTED
+  SUPERSEDED
+  SOURCE_NOT_FOUND
+}
+
+enum MediaCategory {
+  LOGO
+  PRODUCT
+  PLATTER
+  RESTAURANT
+  AMBIANCE
+  TEAM
+  DELIVERY
+  PROMOTION
+  DECORATION
+  TECHNICAL
+  UNCLASSIFIED
+}
+
+enum MediaEditorialCategory {
+  SUSHI
+  MAKI
+  CALIFORNIA
+  SASHIMI
+  NIGIRI
+  POKE
+  PLATTER
+  MENU
+  DESSERT
+  DRINK
+  RESTAURANT
+  TERRACE
+  AMBIANCE
+  TEAM
+  DELIVERY
+  LOGO
+  PROMOTION
+  UNCLASSIFIED
+}
+
+enum MediaStatus {
+  APPROVED
+  NEEDS_REVIEW
+  LOW_QUALITY
+  REJECTED
+  ARCHIVED
+  SOURCE_NOT_FOUND
+}
+
+enum MediaVariantKind {
+  CROP
+  RESIZE
+  ENHANCED
+  INSTAGRAM_FEED
+  INSTAGRAM_STORY
+  FACEBOOK_FEED
+  THUMBNAIL
+}
+
+enum MediaTagOrigin {
+  IMPORTED
+  AI
+  MANUAL
+}
+
+enum MenuItemStatus {
+  DRAFT
+  ACTIVE
+  UNAVAILABLE
+  NEEDS_REVIEW
+  ARCHIVED
+  SOURCE_NOT_FOUND
+}
+
+enum PromotionStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  EXPIRED
+  REJECTED
+  ARCHIVED
+  SOURCE_NOT_FOUND
+}
+
+enum BrandTone {
+  PREMIUM
+  GOURMAND
+  WARM
+  TRENDY
+  FAMILY
+  MODERN
+  DYNAMIC
+  HUMOROUS
+  SOBER
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum ContentFormat {
+  IMAGE
+  CAROUSEL
+  STORY
+  REEL
+}
+
+enum ContentTopic {
+  PRODUCT
+  PLATTER
+  RESTAURANT
+  AMBIANCE
+  PROMOTION
+  DELIVERY
+  BEHIND_THE_SCENES
+  TEAM
+  SEASONAL
+  LOCAL
+}
+
+enum ContentIdeaStatus {
+  DRAFT
+  SELECTED
+  USED
+  REJECTED
+  ARCHIVED
+}
+
+enum PostAudienceScope {
+  BRAND
+  SELECTED_ESTABLISHMENTS
+}
+
+enum SocialPostStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  REJECTED
+  FAILED
+  CANCELLED
+}
+
+enum PostVersionOrigin {
+  AI
+  MANUAL
+  REGENERATION
+  DUPLICATION
+}
+
+enum PostMediaRole {
+  PRIMARY
+  CAROUSEL_SLIDE
+  STORY_FRAME
+  REEL_REFERENCE
+}
+
+enum PublicationJobStatus {
+  PENDING
+  SCHEDULED
+  PROCESSING
+  PUBLISHED
+  FAILED
+  CANCELLED
+  UNCERTAIN
+}
+
+enum PublicationAttemptStatus {
+  STARTED
+  SUCCEEDED
+  FAILED
+  RETRY_SCHEDULED
+  UNCERTAIN
+  CANCELLED
+}
+
+enum FeedbackTarget {
+  SOCIAL_POST
+  CONTENT_IDEA
+  MEDIA_ASSET
+  IMPORT
+  GENERAL
+}
+
+enum FeedbackReason {
+  TEXT_TOO_LONG
+  TEXT_TOO_GENERIC
+  WRONG_PHOTO
+  WRONG_PRODUCT
+  WRONG_INFORMATION
+  WRONG_DATE
+  WRONG_TONE
+  OTHER
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  IMPORT
+  APPROVE
+  REJECT
+  SCHEDULE
+  CANCEL
+  PUBLISH
+  LOGIN
+  LOGOUT
+  EXPORT
+}
+
+// Better Auth core models. Business authorization is represented separately by
+// OrganizationMember so a user can safely belong to several tenants.
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions                Session[]
+  accounts                Account[]
+  organizationMemberships OrganizationMember[]
+  websiteImports          WebsiteImport[]      @relation("WebsiteImportCreatedBy")
+  createdPosts            SocialPost[]         @relation("PostCreatedBy")
+  approvedPosts           SocialPost[]         @relation("PostApprovedBy")
+  postVersions            SocialPostVersion[]
+  feedback                UserFeedback[]
+  auditLogs               AuditLog[]
+
+  @@index([createdAt])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@index([createdAt])
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logo      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members                   OrganizationMember[]
+  brands                    RestaurantBrand[]
+  establishments            Establishment[]
+  brandProfiles             BrandProfile[]
+  socialAccounts            SocialAccount[]
+  websiteImports            WebsiteImport[]
+  websiteImportPages        WebsiteImportPage[]
+  importedData              ImportedData[]
+  mediaAssets               MediaAsset[]
+  mediaVariants             MediaVariant[]
+  mediaTags                 MediaTag[]
+  mediaAssetTags            MediaAssetTag[]
+  mediaAssetEstablishments  MediaAssetEstablishment[]
+  productCategories         ProductCategory[]
+  menuItems                 MenuItem[]
+  menuItemEstablishments    MenuItemEstablishment[]
+  promotions                Promotion[]
+  promotionEstablishments   PromotionEstablishment[]
+  contentCampaigns          ContentCampaign[]
+  campaignEstablishments    ContentCampaignEstablishment[]
+  contentIdeas              ContentIdea[]
+  contentIdeaEstablishments ContentIdeaEstablishment[]
+  socialPosts               SocialPost[]
+  socialPostEstablishments  SocialPostEstablishment[]
+  socialPostVersions        SocialPostVersion[]
+  socialPostMedia           SocialPostMedia[]
+  publicationJobs           PublicationJob[]
+  publicationAttempts       PublicationAttempt[]
+  analyticsSnapshots        AnalyticsSnapshot[]
+  userFeedback              UserFeedback[]
+  auditLogs                 AuditLog[]
+
+  @@index([createdAt])
+}
+
+model OrganizationMember {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         String
+  role           OrganizationRole @default(VIEWER)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model RestaurantBrand {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  websiteUrl     String?      @db.VarChar(2048)
+  isDemo         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  establishments Establishment[]
+  profile        BrandProfile?
+  socialAccounts SocialAccount[]
+  websiteImports WebsiteImport[]
+  importedData   ImportedData[]
+  mediaAssets    MediaAsset[]
+  categories     ProductCategory[]
+  menuItems      MenuItem[]
+  promotions     Promotion[]
+  campaigns      ContentCampaign[]
+  contentIdeas   ContentIdea[]
+  socialPosts    SocialPost[]
+  analytics      AnalyticsSnapshot[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@index([websiteUrl])
+  @@index([createdAt])
+}
+
+model Establishment {
+  id               String               @id @default(cuid())
+  organizationId   String
+  brandId          String
+  name             String
+  slug             String
+  addressLine1     String?
+  addressLine2     String?
+  postalCode       String?
+  city             String?
+  countryCode      String               @default("FR") @db.VarChar(2)
+  phone            String?
+  businessHours    Json?
+  services         String[]             @default([])
+  orderUrl         String?              @db.VarChar(2048)
+  reservationUrl   String?              @db.VarChar(2048)
+  instagramUrl     String?              @db.VarChar(2048)
+  facebookUrl      String?              @db.VarChar(2048)
+  sourceUrl        String?              @db.VarChar(2048)
+  validationStatus DataValidationStatus @default(UNREVIEWED)
+  status           EstablishmentStatus  @default(NEEDS_REVIEW)
+  isDemo           Boolean              @default(false)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand            RestaurantBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  socialAccounts   SocialAccount[]
+  websitePages     WebsiteImportPage[]
+  importedData     ImportedData[]
+  mediaLinks       MediaAssetEstablishment[]
+  menuItemLinks    MenuItemEstablishment[]
+  promotionLinks   PromotionEstablishment[]
+  campaignLinks    ContentCampaignEstablishment[]
+  contentIdeaLinks ContentIdeaEstablishment[]
+  socialPostLinks  SocialPostEstablishment[]
+  analytics        AnalyticsSnapshot[]
+
+  @@unique([brandId, slug])
+  @@index([organizationId])
+  @@index([brandId])
+  @@index([status])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model BrandProfile {
+  id                 String           @id @default(cuid())
+  organizationId     String
+  brandId            String           @unique
+  logoMediaAssetId   String?
+  slogan             String?
+  story              String?          @db.Text
+  cuisineType        String?
+  positioning        String?
+  targetAudience     String?
+  geographicArea     String?
+  priceRange         String?
+  tones              BrandTone[]      @default([])
+  colors             Json?
+  typography         Json?
+  allowedExpressions String[]         @default([])
+  wordsToAvoid       String[]         @default([])
+  allowedEmojis      String[]         @default([])
+  emojiUsageLevel    Int              @default(1)
+  languages          String[]         @default(["fr"])
+  orderLinks         Json?
+  socialPlatforms    SocialPlatform[] @default([])
+  customInstruction  String?          @db.Text
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  organization       Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand              RestaurantBrand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  logoMediaAsset     MediaAsset?      @relation("BrandProfileLogo", fields: [logoMediaAssetId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([createdAt])
+}
+
+model SocialAccount {
+  id                   String              @id @default(cuid())
+  organizationId       String
+  brandId              String
+  establishmentId      String?
+  provider             String              @default("postiz")
+  platform             SocialPlatform
+  displayName          String
+  username             String?
+  externalId           String?
+  remoteIntegrationId  String?
+  credentialsEncrypted String?             @db.Text
+  status               SocialAccountStatus @default(DISCONNECTED)
+  lastSyncedAt         DateTime?
+  metadata             Json?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  organization         Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                RestaurantBrand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  establishment        Establishment?      @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  publicationJobs PublicationJob[]
+  analytics       AnalyticsSnapshot[]
+
+  @@unique([organizationId, provider, externalId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([externalId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model WebsiteImport {
+  id                 String              @id @default(cuid())
+  organizationId     String
+  brandId            String
+  createdById        String?
+  websiteUrl         String              @db.VarChar(2048)
+  mode               WebsiteImportMode   @default(REAL)
+  status             WebsiteImportStatus @default(PENDING)
+  startedAt          DateTime?
+  completedAt        DateTime?
+  pagesDetected      Int                 @default(0)
+  pagesScanned       Int                 @default(0)
+  productsDetected   Int                 @default(0)
+  productsImported   Int                 @default(0)
+  categoriesDetected Int                 @default(0)
+  imagesDetected     Int                 @default(0)
+  imagesImported     Int                 @default(0)
+  duplicatesDetected Int                 @default(0)
+  imagesTooSmall     Int                 @default(0)
+  warningsCount      Int                 @default(0)
+  errorsCount        Int                 @default(0)
+  errorMessage       String?             @db.Text
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand              RestaurantBrand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  createdBy          User?               @relation("WebsiteImportCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  pages        WebsiteImportPage[]
+  importedData ImportedData[]
+  mediaAssets  MediaAsset[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([websiteUrl])
+  @@index([createdAt])
+}
+
+model WebsiteImportPage {
+  id                   String            @id @default(cuid())
+  organizationId       String
+  websiteImportId      String
+  establishmentId      String?
+  sourceUrl            String            @db.VarChar(2048)
+  canonicalUrl         String?           @db.VarChar(2048)
+  pageType             WebsitePageType   @default(OTHER)
+  status               WebsitePageStatus @default(DISCOVERED)
+  httpStatus           Int?
+  contentHash          String?           @db.VarChar(64)
+  discoveredAt         DateTime          @default(now())
+  fetchedAt            DateTime?
+  analyzedAt           DateTime?
+  sourceLastModifiedAt DateTime?
+  lastChangeDetectedAt DateTime?
+  errorCode            String?
+  internalError        String?           @db.Text
+  metadata             Json?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  websiteImport        WebsiteImport     @relation(fields: [websiteImportId], references: [id], onDelete: Cascade)
+  establishment        Establishment?    @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  importedData ImportedData[]
+  mediaAssets  MediaAsset[]
+  menuItems    MenuItem[]
+
+  @@unique([websiteImportId, sourceUrl])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([status])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model ImportedData {
+  id                   String               @id @default(cuid())
+  organizationId       String
+  brandId              String
+  establishmentId      String?
+  websiteImportId      String
+  websiteImportPageId  String?
+  type                 ImportedDataType
+  key                  String
+  value                Json
+  normalizedValue      String?              @db.Text
+  sourceUrl            String               @db.VarChar(2048)
+  confidence           Float                @default(0)
+  validationStatus     DataValidationStatus @default(UNREVIEWED)
+  critical             Boolean              @default(false)
+  retrievedAt          DateTime             @default(now())
+  sourceLastModifiedAt DateTime?
+  lastChangeDetectedAt DateTime?
+  fingerprint          String?              @db.VarChar(64)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                RestaurantBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  establishment        Establishment?       @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+  websiteImport        WebsiteImport        @relation(fields: [websiteImportId], references: [id], onDelete: Cascade)
+  websiteImportPage    WebsiteImportPage?   @relation(fields: [websiteImportPageId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([validationStatus])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model MediaAsset {
+  id                      String                 @id @default(cuid())
+  organizationId          String
+  brandId                 String?
+  websiteImportId         String?
+  websiteImportPageId     String?
+  menuItemId              String?
+  duplicateOfId           String?
+  sourceUrl               String                 @db.VarChar(2048)
+  sourcePageUrl           String                 @db.VarChar(2048)
+  originalName            String
+  storageKey              String
+  storageProvider         String                 @default("local")
+  storageBucket           String?
+  publicUrl               String?                @db.VarChar(2048)
+  mimeType                String
+  width                   Int?
+  height                  Int?
+  byteSize                BigInt?
+  aspectRatio             Float?
+  sha256                  String?                @db.VarChar(64)
+  perceptualHash          String?                @db.VarChar(64)
+  altText                 String?                @db.Text
+  detectedTitle           String?
+  detectedDescription     String?                @db.Text
+  category                MediaCategory          @default(UNCLASSIFIED)
+  editorialCategory       MediaEditorialCategory @default(UNCLASSIFIED)
+  qualityScore            Int                    @default(0)
+  instagramPotentialScore Int                    @default(0)
+  facebookPotentialScore  Int                    @default(0)
+  storyPotentialScore     Int                    @default(0)
+  carouselPotentialScore  Int                    @default(0)
+  reelPotentialScore      Int                    @default(0)
+  status                  MediaStatus            @default(NEEDS_REVIEW)
+  importedAt              DateTime               @default(now())
+  sourceLastModifiedAt    DateTime?
+  lastChangeDetectedAt    DateTime?
+  usageCount              Int                    @default(0)
+  lastUsedAt              DateTime?
+  sourceNotFoundAt        DateTime?
+  isDemo                  Boolean                @default(false)
+  metadata                Json?
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  organization            Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                   RestaurantBrand?       @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  websiteImport           WebsiteImport?         @relation(fields: [websiteImportId], references: [id], onDelete: SetNull)
+  websiteImportPage       WebsiteImportPage?     @relation(fields: [websiteImportPageId], references: [id], onDelete: SetNull)
+  menuItem                MenuItem?              @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  duplicateOf             MediaAsset?            @relation("MediaDuplicates", fields: [duplicateOfId], references: [id], onDelete: SetNull)
+  duplicates              MediaAsset[]           @relation("MediaDuplicates")
+
+  variants             MediaVariant[]
+  tagLinks             MediaAssetTag[]
+  establishmentLinks   MediaAssetEstablishment[]
+  socialPostMedia      SocialPostMedia[]
+  logoForBrandProfiles BrandProfile[]            @relation("BrandProfileLogo")
+  feedback             UserFeedback[]
+
+  @@unique([organizationId, sha256])
+  @@unique([organizationId, storageKey])
+  @@index([organizationId])
+  @@index([menuItemId])
+  @@index([status])
+  @@index([category])
+  @@index([qualityScore])
+  @@index([sourceUrl])
+  @@index([sha256])
+  @@index([perceptualHash])
+  @@index([createdAt])
+}
+
+model MediaVariant {
+  id             String           @id @default(cuid())
+  organizationId String
+  mediaAssetId   String
+  kind           MediaVariantKind
+  storageKey     String
+  publicUrl      String?          @db.VarChar(2048)
+  mimeType       String
+  width          Int
+  height         Int
+  byteSize       BigInt?
+  sha256         String?          @db.VarChar(64)
+  cropData       Json?
+  processingData Json?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  mediaAsset     MediaAsset       @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  socialPostMedia SocialPostMedia[]
+
+  @@unique([organizationId, storageKey])
+  @@index([organizationId])
+  @@index([mediaAssetId])
+  @@index([sha256])
+  @@index([createdAt])
+}
+
+model MediaTag {
+  id             String         @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  origin         MediaTagOrigin @default(MANUAL)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  mediaLinks MediaAssetTag[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@index([createdAt])
+}
+
+model MediaAssetTag {
+  id             String       @id @default(cuid())
+  organizationId String
+  mediaAssetId   String
+  mediaTagId     String
+  confidence     Float?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  mediaAsset     MediaAsset   @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  mediaTag       MediaTag     @relation(fields: [mediaTagId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaAssetId, mediaTagId])
+  @@index([organizationId])
+  @@index([mediaTagId])
+  @@index([createdAt])
+}
+
+model MediaAssetEstablishment {
+  id              String        @id @default(cuid())
+  organizationId  String
+  mediaAssetId    String
+  establishmentId String
+  confidence      Float?
+  validated       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  mediaAsset      MediaAsset    @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  establishment   Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaAssetId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([createdAt])
+}
+
+model ProductCategory {
+  id               String               @id @default(cuid())
+  organizationId   String
+  brandId          String
+  parentId         String?
+  name             String
+  slug             String
+  description      String?              @db.Text
+  sourceUrl        String?              @db.VarChar(2048)
+  validationStatus DataValidationStatus @default(UNREVIEWED)
+  sortOrder        Int                  @default(0)
+  isDemo           Boolean              @default(false)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand            RestaurantBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  parent           ProductCategory?     @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children         ProductCategory[]    @relation("CategoryTree")
+
+  menuItems MenuItem[]
+
+  @@unique([brandId, slug])
+  @@index([organizationId])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model MenuItem {
+  id                   String               @id @default(cuid())
+  organizationId       String
+  brandId              String
+  categoryId           String?
+  sourcePageId         String?
+  name                 String
+  slug                 String
+  description          String?              @db.Text
+  price                Decimal?             @db.Decimal(10, 2)
+  currency             String               @default("EUR") @db.VarChar(3)
+  allergens            String[]             @default([])
+  options              Json?
+  sourceUrl            String?              @db.VarChar(2048)
+  confidence           Float                @default(0)
+  validationStatus     DataValidationStatus @default(UNREVIEWED)
+  status               MenuItemStatus       @default(NEEDS_REVIEW)
+  sourceLastModifiedAt DateTime?
+  lastChangeDetectedAt DateTime?
+  isDemo               Boolean              @default(false)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                RestaurantBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  category             ProductCategory?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  sourcePage           WebsiteImportPage?   @relation(fields: [sourcePageId], references: [id], onDelete: SetNull)
+
+  mediaAssets        MediaAsset[]
+  establishmentLinks MenuItemEstablishment[]
+
+  @@unique([brandId, slug])
+  @@index([organizationId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model MenuItemEstablishment {
+  id               String               @id @default(cuid())
+  organizationId   String
+  menuItemId       String
+  establishmentId  String
+  available        Boolean              @default(true)
+  localPrice       Decimal?             @db.Decimal(10, 2)
+  orderUrl         String?              @db.VarChar(2048)
+  sourceUrl        String?              @db.VarChar(2048)
+  validationStatus DataValidationStatus @default(UNREVIEWED)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  menuItem         MenuItem             @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  establishment    Establishment        @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([menuItemId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model Promotion {
+  id                   String               @id @default(cuid())
+  organizationId       String
+  brandId              String
+  name                 String
+  description          String?              @db.Text
+  offerDetails         String?              @db.Text
+  terms                String?              @db.Text
+  startsAt             DateTime?
+  endsAt               DateTime?
+  sourceUrl            String?              @db.VarChar(2048)
+  validationStatus     DataValidationStatus @default(UNREVIEWED)
+  status               PromotionStatus      @default(PENDING_REVIEW)
+  sourceLastModifiedAt DateTime?
+  lastChangeDetectedAt DateTime?
+  isDemo               Boolean              @default(false)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                RestaurantBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  establishmentLinks PromotionEstablishment[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([sourceUrl])
+  @@index([createdAt])
+}
+
+model PromotionEstablishment {
+  id              String        @id @default(cuid())
+  organizationId  String
+  promotionId     String
+  establishmentId String
+  createdAt       DateTime      @default(now())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  promotion       Promotion     @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  establishment   Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([promotionId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([createdAt])
+}
+
+model ContentCampaign {
+  id               String          @id @default(cuid())
+  organizationId   String
+  brandId          String
+  name             String
+  objective        String?
+  brief            String?         @db.Text
+  generationConfig Json?
+  startsAt         DateTime?
+  endsAt           DateTime?
+  status           CampaignStatus  @default(DRAFT)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand            RestaurantBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  establishmentLinks ContentCampaignEstablishment[]
+  ideas              ContentIdea[]
+  posts              SocialPost[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ContentCampaignEstablishment {
+  id                String          @id @default(cuid())
+  organizationId    String
+  contentCampaignId String
+  establishmentId   String
+  createdAt         DateTime        @default(now())
+  organization      Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contentCampaign   ContentCampaign @relation(fields: [contentCampaignId], references: [id], onDelete: Cascade)
+  establishment     Establishment   @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentCampaignId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([createdAt])
+}
+
+model ContentIdea {
+  id                String            @id @default(cuid())
+  organizationId    String
+  brandId           String
+  contentCampaignId String?
+  title             String
+  objective         String
+  platforms         SocialPlatform[]
+  format            ContentFormat
+  topic             ContentTopic
+  status            ContentIdeaStatus @default(DRAFT)
+  rationale         String            @db.Text
+  warnings          String[]          @default([])
+  suggestedAt       DateTime?
+  repetitionScore   Float             @default(0)
+  generatedBy       String            @default("mock")
+  generationPayload Json?
+  isDemo            Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand             RestaurantBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  contentCampaign   ContentCampaign?  @relation(fields: [contentCampaignId], references: [id], onDelete: SetNull)
+
+  establishmentLinks ContentIdeaEstablishment[]
+  socialPosts        SocialPost[]
+  feedback           UserFeedback[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([suggestedAt])
+  @@index([createdAt])
+}
+
+model ContentIdeaEstablishment {
+  id              String        @id @default(cuid())
+  organizationId  String
+  contentIdeaId   String
+  establishmentId String
+  createdAt       DateTime      @default(now())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contentIdea     ContentIdea   @relation(fields: [contentIdeaId], references: [id], onDelete: Cascade)
+  establishment   Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentIdeaId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([createdAt])
+}
+
+model SocialPost {
+  id                   String            @id @default(cuid())
+  organizationId       String
+  brandId              String
+  contentCampaignId    String?
+  contentIdeaId        String?
+  createdById          String?
+  approvedById         String?
+  title                String
+  objective            String
+  audienceScope        PostAudienceScope @default(BRAND)
+  platforms            SocialPlatform[]
+  format               ContentFormat
+  topic                ContentTopic
+  instagramCaption     String?           @db.Text
+  facebookCaption      String?           @db.Text
+  callToAction         String
+  hashtags             String[]          @default([])
+  reelScript           String?           @db.Text
+  storyFrames          Json?
+  carouselSlides       Json?
+  rationale            String?           @db.Text
+  warnings             String[]          @default([])
+  repetitionScore      Float             @default(0)
+  status               SocialPostStatus  @default(DRAFT)
+  scheduledAt          DateTime?
+  approvedAt           DateTime?
+  rejectedAt           DateTime?
+  rejectionReason      FeedbackReason?
+  rejectionNote        String?           @db.Text
+  currentVersionNumber Int               @default(1)
+  isDemo               Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  organization         Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand                RestaurantBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  contentCampaign      ContentCampaign?  @relation(fields: [contentCampaignId], references: [id], onDelete: SetNull)
+  contentIdea          ContentIdea?      @relation(fields: [contentIdeaId], references: [id], onDelete: SetNull)
+  createdBy            User?             @relation("PostCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  approvedBy           User?             @relation("PostApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  establishmentLinks SocialPostEstablishment[]
+  versions           SocialPostVersion[]
+  media              SocialPostMedia[]
+  publicationJobs    PublicationJob[]
+  analytics          AnalyticsSnapshot[]
+  feedback           UserFeedback[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([createdAt])
+}
+
+model SocialPostEstablishment {
+  id              String        @id @default(cuid())
+  organizationId  String
+  socialPostId    String
+  establishmentId String
+  createdAt       DateTime      @default(now())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  socialPost      SocialPost    @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  establishment   Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([socialPostId, establishmentId])
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([createdAt])
+}
+
+model SocialPostVersion {
+  id             String            @id @default(cuid())
+  organizationId String
+  socialPostId   String
+  createdById    String?
+  versionNumber  Int
+  origin         PostVersionOrigin
+  content        Json
+  internalNote   String?           @db.Text
+  createdAt      DateTime          @default(now())
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  socialPost     SocialPost        @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  createdBy      User?             @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@unique([socialPostId, versionNumber])
+  @@index([organizationId])
+  @@index([createdAt])
+}
+
+model SocialPostMedia {
+  id             String        @id @default(cuid())
+  organizationId String
+  socialPostId   String
+  mediaAssetId   String
+  mediaVariantId String?
+  role           PostMediaRole @default(PRIMARY)
+  sortOrder      Int           @default(0)
+  headline       String?
+  body           String?       @db.Text
+  createdAt      DateTime      @default(now())
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  socialPost     SocialPost    @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  mediaAsset     MediaAsset    @relation(fields: [mediaAssetId], references: [id], onDelete: Restrict)
+  mediaVariant   MediaVariant? @relation(fields: [mediaVariantId], references: [id], onDelete: SetNull)
+
+  @@unique([socialPostId, sortOrder])
+  @@index([organizationId])
+  @@index([mediaAssetId])
+  @@index([createdAt])
+}
+
+model PublicationJob {
+  id               String               @id @default(cuid())
+  organizationId   String
+  socialPostId     String
+  socialAccountId  String
+  provider         String               @default("postiz")
+  platform         SocialPlatform
+  status           PublicationJobStatus @default(PENDING)
+  scheduledAt      DateTime
+  externalId       String?
+  remoteStatus     String?
+  idempotencyKey   String
+  sanitizedPayload Json?
+  attemptsCount    Int                  @default(0)
+  nextAttemptAt    DateTime?
+  uncertainSince   DateTime?
+  publishedAt      DateTime?
+  lastErrorCode    String?
+  lastErrorMessage String?              @db.Text
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  organization     Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  socialPost       SocialPost           @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  socialAccount    SocialAccount        @relation(fields: [socialAccountId], references: [id], onDelete: Restrict)
+
+  attempts PublicationAttempt[]
+
+  @@unique([organizationId, provider, idempotencyKey])
+  @@index([organizationId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([externalId])
+  @@index([createdAt])
+}
+
+model PublicationAttempt {
+  id                    String                   @id @default(cuid())
+  organizationId        String
+  publicationJobId      String
+  provider              String
+  platform              SocialPlatform
+  attemptNumber         Int
+  attemptedAt           DateTime                 @default(now())
+  status                PublicationAttemptStatus @default(STARTED)
+  sanitizedPayload      Json?
+  httpStatus            Int?
+  errorCode             String?
+  errorMessage          String?                  @db.Text
+  nextAttemptAt         DateTime?
+  sanitizedResponse     Json?
+  externalId            String?
+  remoteStatusCheckedAt DateTime?
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  organization          Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  publicationJob        PublicationJob           @relation(fields: [publicationJobId], references: [id], onDelete: Cascade)
+
+  @@unique([publicationJobId, attemptNumber])
+  @@index([organizationId])
+  @@index([status])
+  @@index([externalId])
+  @@index([createdAt])
+}
+
+model AnalyticsSnapshot {
+  id              String           @id @default(cuid())
+  organizationId  String
+  brandId         String?
+  establishmentId String?
+  socialPostId    String?
+  socialAccountId String?
+  provider        String
+  platform        SocialPlatform
+  externalId      String?
+  capturedAt      DateTime         @default(now())
+  periodStart     DateTime?
+  periodEnd       DateTime?
+  impressions     Int?
+  reach           Int?
+  likes           Int?
+  comments        Int?
+  shares          Int?
+  saves           Int?
+  clicks          Int?
+  videoViews      Int?
+  engagementRate  Float?
+  rawData         Json?
+  createdAt       DateTime         @default(now())
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand           RestaurantBrand? @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  establishment   Establishment?   @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+  socialPost      SocialPost?      @relation(fields: [socialPostId], references: [id], onDelete: SetNull)
+  socialAccount   SocialAccount?   @relation(fields: [socialAccountId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([establishmentId])
+  @@index([externalId])
+  @@index([capturedAt])
+  @@index([createdAt])
+}
+
+model UserFeedback {
+  id             String          @id @default(cuid())
+  organizationId String
+  userId         String?
+  socialPostId   String?
+  contentIdeaId  String?
+  mediaAssetId   String?
+  target         FeedbackTarget
+  reason         FeedbackReason?
+  message        String?         @db.Text
+  metadata       Json?
+  createdAt      DateTime        @default(now())
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  socialPost     SocialPost?     @relation(fields: [socialPostId], references: [id], onDelete: SetNull)
+  contentIdea    ContentIdea?    @relation(fields: [contentIdeaId], references: [id], onDelete: SetNull)
+  mediaAsset     MediaAsset?     @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([socialPostId])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  actorUserId    String?
+  action         AuditAction
+  entityType     String
+  entityId       String?
+  ipAddress      String?
+  userAgent      String?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor          User?        @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([organizationId, entityType, entityId])
+  @@index([createdAt])
+}

@@ -1,0 +1,30 @@
+{
+  "model": {
+    "id": 11,
+    "lib_famille": "Makis",
+    "titre": "Les classiques",
+    "description": "Riz et poisson enroulés",
+    "photo": null,
+    "index": 2,
+    "updated_at": "2026-01-10 09:00:00",
+    "produits": [
+      {
+        "id": 101,
+        "famille_id": 11,
+        "designation": "Maki Saumon",
+        "prix": "5.90",
+        "description": "Six pièces",
+        "piece": "6 pièces",
+        "photo": "/images/maki-saumon.png",
+        "cacher": false,
+        "deleted_at": null,
+        "effective_prix_promo": "5.50",
+        "offer_badges": ["Promotion"],
+        "composants": [
+          { "id": 74, "lib_composant": "Poissons" },
+          { "id": 71, "lib_composant": "Gluten" }
+        ]
+      }
+    ]
+  }
+}

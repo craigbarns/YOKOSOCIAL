@@ -1,0 +1,22 @@
+{
+  "model": [
+    {
+      "id": 10,
+      "lib_famille": "Sushis",
+      "titre": "Les essentiels",
+      "description": "Canapé de riz et poisson",
+      "photo": "https://image.ibb.co/external/category.jpg",
+      "index": 1,
+      "updated_at": "2026-01-10 09:00:00"
+    },
+    {
+      "id": 11,
+      "lib_famille": "Makis",
+      "titre": "Les classiques",
+      "description": "Riz et poisson enroulés",
+      "photo": null,
+      "index": 2,
+      "updated_at": "2026-01-10 09:00:00"
+    }
+  ]
+}
