@@ -1,4 +1,4 @@
-# cache-bust: v3
+# cache-bust: v4
 FROM node:22-slim AS dependencies
 WORKDIR /app
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
@@ -23,5 +23,7 @@ COPY --chown=node:node --from=builder /app/apps/web/.next/static ./apps/web/.nex
 COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
 COPY --chown=node:node --from=builder /app/packages/database ./packages/database
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
+COPY --chown=node:node scripts/migrate.mjs ./scripts/migrate.mjs
 USER node
-CMD ["node", "apps/web/server.js"]
+CMD ["sh", "-c", "node scripts/migrate.mjs && node apps/web/server.js"]
+
