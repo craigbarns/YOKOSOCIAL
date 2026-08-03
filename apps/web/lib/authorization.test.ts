@@ -29,6 +29,16 @@ describe("mutation origin authorization", () => {
     ).not.toThrow();
   });
 
+  it("accepte l’origine configurée quand l’URL interne diffère (proxy Railway)", () => {
+    const proxiedRequest = new Request("http://localhost:8080/api/organizations", {
+      method: "POST",
+      headers: { origin: "https://social.yokosushi.example" }
+    });
+    expect(() =>
+      requireTrustedMutationOrigin(proxiedRequest, productionEnvironment)
+    ).not.toThrow();
+  });
+
   it("refuse une origine externe", () => {
     expect(() =>
       requireTrustedMutationOrigin(

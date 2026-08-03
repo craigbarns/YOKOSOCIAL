@@ -95,6 +95,9 @@ export function requireTrustedMutationOrigin(
   }
 
   const trustedOrigins = resolveTrustedOrigins(environment);
+  if (trustedOrigins.includes(origin)) return;
+  // Derrière le proxy Railway, request.url porte l'hôte interne : la
+  // comparaison same-origin ne suffit qu'en accès direct (dev local).
   if (origin === new URL(request.url).origin) return;
 
   throw new AuthorizationError("Origine de la requête refusée.", 403, "INVALID_ORIGIN");
