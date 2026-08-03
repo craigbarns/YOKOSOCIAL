@@ -15,8 +15,8 @@ export default function RegisterPage() {
   const demoMode = isPublicDemoMode();
   const router = useRouter();
   const { register, state } = useDemo();
-  const [name, setName] = useState(demoMode ? "Responsable YokoSushi" : "");
-  const [email, setEmail] = useState(demoMode ? "responsable@yokosocial.local" : "");
+  const [name, setName] = useState(demoMode ? "Administrateur Marque" : "");
+  const [email, setEmail] = useState(demoMode ? "demo@feedpulse.local" : "");
   const [password, setPassword] = useState(demoMode ? "demonstration" : "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();

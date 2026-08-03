@@ -15,11 +15,11 @@ export function BrandMark({
       </span>
       {!compact && (
         <span>
-          <span className="block text-[15px] leading-none font-bold tracking-tight text-current">
-            YokoSushi
+          <span className="block text-[16px] leading-none font-bold tracking-tight text-current">
+            FeedPulse
           </span>
           <span className="mt-1 block text-[10px] leading-none font-semibold tracking-[0.18em] text-current/55 uppercase">
-            Social Agent
+            AI Social Pilot
           </span>
         </span>
       )}

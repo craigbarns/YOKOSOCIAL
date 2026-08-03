@@ -14,7 +14,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             Pilotage social intelligent
           </Badge>
           <h1 className="text-5xl leading-[1.05] font-semibold tracking-[-0.045em] text-balance">
-            Du site YokoSushi au calendrier social, avec vous aux commandes.
+            De vos sites web au calendrier social, avec vous aux commandes.
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
             Importez les contenus, préparez les publications Instagram et Facebook, validez chaque

@@ -28,7 +28,7 @@ export default function LoginPage() {
     setError(undefined);
     try {
       if (demoMode) {
-        await login({ name: state.user?.name ?? "Responsable YokoSushi", email });
+        await login({ name: state.user?.name ?? "Administrateur Marque", email });
       } else {
         const result = await authClient.signIn.email({ email, password });
         if (result.error) throw new Error("E-mail ou mot de passe incorrect.");
@@ -46,7 +46,7 @@ export default function LoginPage() {
       <div className="mb-8">
         <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-rose-600">
           <Sparkles className="size-4" />
-          {demoMode ? "Mode démonstration activé" : "Espace YokoSushi sécurisé"}
+          {demoMode ? "Mode démonstration activé" : "Espace FeedPulse sécurisé"}
         </div>
         <h2 className="text-3xl font-semibold tracking-tight text-slate-950">Bon retour.</h2>
         <p className="mt-2 text-sm leading-6 text-slate-500">
