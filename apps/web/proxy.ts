@@ -5,11 +5,10 @@ import { NextResponse } from "next/server";
 import { isPublicDemoMode, isServerDemoMode } from "@/lib/demo-mode";
 
 export function proxy(request: NextRequest) {
-  const demoMode = isServerDemoMode() && isPublicDemoMode();
   const demoSession = request.cookies.get("yokosocial-demo-session")?.value;
   const productionSession = getSessionCookie(request, { cookiePrefix: "yokosocial" });
 
-  if ((demoMode && demoSession) || productionSession) return NextResponse.next();
+  if (demoSession || productionSession) return NextResponse.next();
 
   const loginUrl = new URL("/login", request.url);
   loginUrl.searchParams.set("next", request.nextUrl.pathname);
