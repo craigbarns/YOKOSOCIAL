@@ -15,6 +15,7 @@
     ]
   },
   "deploy": {
+    "preDeployCommand": "sh -c 'cd packages/database && npx prisma db push --accept-data-loss'",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
