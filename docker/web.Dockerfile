@@ -1,5 +1,6 @@
 FROM node:22-slim AS dependencies
 WORKDIR /app
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 COPY package.json turbo.json tsconfig.base.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY apps/worker/package.json apps/worker/package.json
@@ -12,6 +13,7 @@ RUN npx turbo run build --filter=@yokosocial/web...
 
 FROM node:22-slim AS runner
 WORKDIR /app
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
