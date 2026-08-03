@@ -30,7 +30,10 @@ export default function RegisterPage() {
         await register({ name, email });
       } else {
         const result = await authClient.signUp.email({ name, email, password });
-        if (result.error) throw new Error(result.error.message || "Impossible de créer ce compte.");
+        if (result.error) {
+          console.error("[signUp error]", result.error);
+          throw new Error(result.error.message || "Impossible de créer ce compte.");
+        }
       }
       router.push("/onboarding");
     } catch (caught) {

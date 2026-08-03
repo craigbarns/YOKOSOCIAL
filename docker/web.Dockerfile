@@ -18,8 +18,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --chown=node:node --from=builder /app/apps/web/.next/standalone ./
 COPY --chown=node:node --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
-COPY --chown=node:node --from=builder /app/packages/database/prisma ./packages/database/prisma
-COPY --chown=node:node --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --chown=node:node --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --chown=node:node --from=builder /app/packages/database ./packages/database
+COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 USER node
-CMD ["node", "apps/web/server.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=packages/database/prisma/schema.prisma --accept-data-loss && node apps/web/server.js"]
