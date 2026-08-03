@@ -121,7 +121,7 @@ export function RealSocialAccountsPage() {
       <PageHeader
         eyebrow="Publication · espace réel"
         title="Comptes sociaux"
-        description="Postiz connecte et programme les réseaux. YokoSushi Social Agent conserve les contenus, la validation humaine et le suivi des statuts."
+        description="Postiz connecte et programme les réseaux. FeedPulse conserve les contenus, la validation humaine et le suivi des statuts."
         action={
           canManageAccounts ? (
             <div className="flex flex-wrap gap-2">

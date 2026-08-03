@@ -133,7 +133,7 @@ function createAuth() {
   const config = resolveAuthRuntimeConfig();
 
   return betterAuth({
-    appName: "YokoSushi Social Agent",
+    appName: "FeedPulse",
     baseURL: config.baseURL,
     secret: config.secret,
     database: prismaAdapter(db, { provider: "postgresql" }),

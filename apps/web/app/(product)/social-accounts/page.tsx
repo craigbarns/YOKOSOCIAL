@@ -27,7 +27,7 @@ function DemoSocialAccountsPage() {
       <PageHeader
         eyebrow="Publication"
         title="Comptes sociaux"
-        description="Postiz reste le moteur de connexion et de programmation. YokoSushi Social Agent conserve le workflow éditorial."
+        description="Postiz reste le moteur de connexion et de programmation. FeedPulse conserve le workflow éditorial."
         action={
           <Button variant="secondary">
             <PlugZap className="size-4" /> Tester la connexion

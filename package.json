@@ -1,8 +1,8 @@
 {
-  "name": "yokosushi-social-agent",
+  "name": "feedpulse",
   "version": "0.1.0",
   "private": true,
-  "description": "Agent social media indépendant pour YokoSushi",
+  "description": "Agent social media IA pour marques, franchises et restaurants",
   "license": "UNLICENSED",
   "packageManager": "npm@10.8.2",
   "engines": {

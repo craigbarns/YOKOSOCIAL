@@ -6,10 +6,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "YokoSushi Social Agent",
-    template: "%s · YokoSushi Social Agent"
+    default: "FeedPulse",
+    template: "%s · FeedPulse"
   },
-  description: "Préparez, validez et programmez la communication sociale de YokoSushi.",
+  description: "Préparez, validez et programmez la communication sociale de vos marques et établissements.",
   robots: { index: false, follow: false }
 };
 
