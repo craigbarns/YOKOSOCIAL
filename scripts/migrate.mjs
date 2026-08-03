@@ -5,8 +5,9 @@
  * Runs before the Next.js server on Railway startup.
  */
 
-import pg from 'pg';
-const { Client } = pg;
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Client } = require('pg');
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -17,7 +18,8 @@ if (!DATABASE_URL) {
 
 console.log('[migrate] Connecting to database...');
 
-const client = new Client({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// No SSL for Railway internal network (postgres.railway.internal)
+const client = new Client({ connectionString: DATABASE_URL });
 
 try {
   await client.connect();
