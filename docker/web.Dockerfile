@@ -23,7 +23,6 @@ COPY --chown=node:node --from=builder /app/apps/web/.next/static ./apps/web/.nex
 COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
 COPY --chown=node:node --from=builder /app/packages/database ./packages/database
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --chown=node:node scripts/migrate.mjs ./scripts/migrate.mjs
 USER node
-CMD ["sh", "-c", "node scripts/migrate.mjs && node apps/web/server.js"]
+CMD ["node", "apps/web/server.js"]
 
