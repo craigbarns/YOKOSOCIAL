@@ -95,9 +95,7 @@ export function requireTrustedMutationOrigin(
   }
 
   const trustedOrigins = resolveTrustedOrigins(environment);
-  if (trustedOrigins.includes(origin)) return;
-
-  if (environment.NODE_ENV !== "production" && origin === new URL(request.url).origin) return;
+  if (origin === new URL(request.url).origin) return;
 
   throw new AuthorizationError("Origine de la requête refusée.", 403, "INVALID_ORIGIN");
 }
