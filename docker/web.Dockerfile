@@ -23,4 +23,4 @@ COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
 COPY --chown=node:node --from=builder /app/packages/database ./packages/database
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 USER node
-CMD ["sh", "-c", "npx prisma db push --schema=packages/database/prisma/schema.prisma --accept-data-loss && node apps/web/server.js"]
+CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma db push --schema=packages/database/prisma/schema.prisma --accept-data-loss; fi && node apps/web/server.js"]
