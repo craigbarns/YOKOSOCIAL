@@ -33,7 +33,7 @@ export default function LoginPage() {
         const result = await authClient.signIn.email({ email, password });
         if (result.error) throw new Error("E-mail ou mot de passe incorrect.");
       }
-      router.push(demoMode && !state.organization ? "/onboarding" : "/dashboard");
+      router.push(demoMode && !state.organization ? "/onboarding" : "/today");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Connexion impossible.");
     } finally {

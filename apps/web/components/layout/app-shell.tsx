@@ -15,6 +15,7 @@ import {
   Settings,
   Share2,
   Store,
+  Sun,
   X
 } from "lucide-react";
 import Link from "next/link";
@@ -33,6 +34,7 @@ import { isPublicDemoMode } from "@/lib/demo-mode";
 import { BrandMark } from "./brand-mark";
 
 const navigation = [
+  { href: "/today", label: "Aujourd’hui", icon: Sun },
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/calendar", label: "Calendrier", icon: CalendarDays },
   { href: "/posts", label: "Publications", icon: PenSquare },
