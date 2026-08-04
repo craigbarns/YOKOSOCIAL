@@ -17,7 +17,7 @@ function snapshot(overrides: Partial<TodaySnapshot> = {}): TodaySnapshot {
 }
 
 describe("resolveNextAction", () => {
-  it("demande le site quand aucun import n'existe", () => {
+  it("demande le site quand aucun import n’existe", () => {
     const action = resolveNextAction(
       snapshot({
         import: { status: "NONE", pagesScanned: 0, productsDetected: 0, imagesDetected: 0 },
@@ -27,7 +27,7 @@ describe("resolveNextAction", () => {
     expect(action).toEqual({ kind: "IMPORT_WEBSITE", websiteUrl: "https://chez-marta.fr" });
   });
 
-  it("montre la progression pendant l'import", () => {
+  it("montre la progression pendant l’import", () => {
     const action = resolveNextAction(
       snapshot({
         import: { status: "RUNNING", pagesScanned: 12, productsDetected: 28, imagesDetected: 64 }
@@ -85,7 +85,7 @@ describe("resolveNextAction", () => {
     expect(action).toEqual({ kind: "REVIEW_POSTS", count: 1, estimatedMinutes: 1 });
   });
 
-  it("demande la connexion d'un compte social quand il n'en existe aucun", () => {
+  it("demande la connexion d’un compte social quand il n’en existe aucun", () => {
     const action = resolveNextAction(snapshot({ connectedSocialAccounts: 0 }));
     expect(action).toEqual({ kind: "CONNECT_SOCIAL" });
   });
