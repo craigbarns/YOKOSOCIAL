@@ -397,11 +397,23 @@ export function RealProductsPage() {
                 className="grid gap-4 p-5 md:grid-cols-[88px_minmax(0,1fr)_auto] md:items-center"
               >
                 <div className="aspect-square overflow-hidden rounded-xl bg-slate-100">
-                  {product.recommendedMedia?.publicUrl ? (
+                  {product.recommendedMedia?.publicUrl || product.recommendedMedia?.sourceUrl ? (
                     <img
-                      src={product.recommendedMedia.publicUrl}
+                      src={
+                        (product.recommendedMedia.publicUrl ??
+                          product.recommendedMedia.sourceUrl) ||
+                        undefined
+                      }
                       alt=""
                       className="h-full w-full object-cover"
+                      onError={(e) => {
+                        if (
+                          product.recommendedMedia?.sourceUrl &&
+                          e.currentTarget.src !== product.recommendedMedia.sourceUrl
+                        ) {
+                          e.currentTarget.src = product.recommendedMedia.sourceUrl;
+                        }
+                      }}
                     />
                   ) : (
                     <span className="grid h-full place-items-center text-slate-300">

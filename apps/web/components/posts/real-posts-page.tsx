@@ -561,7 +561,9 @@ export function RealPostsPage() {
     });
   }, [form, media, selectedPost]);
 
-  const approvedMedia = media.filter((item) => item.status === "APPROVED" && item.publicUrl);
+  const approvedMedia = media.filter(
+    (item) => item.status === "APPROVED" && (item.publicUrl || item.sourceUrl)
+  );
   const approvedEstablishments = establishments.filter(
     (item) => item.status === "ACTIVE" && item.validationStatus === "APPROVED"
   );
@@ -993,9 +995,14 @@ export function RealPostsPage() {
                               )}
                             >
                               <img
-                                src={asset.publicUrl ?? ""}
+                                src={(asset.publicUrl ?? asset.sourceUrl) || undefined}
                                 alt={asset.altText ?? mediaTitle(asset)}
                                 className="h-full w-full object-cover"
+                                onError={(e) => {
+                                  if (asset.sourceUrl && e.currentTarget.src !== asset.sourceUrl) {
+                                    e.currentTarget.src = asset.sourceUrl;
+                                  }
+                                }}
                               />
                               {checked && (
                                 <span className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-rose-500 text-white">
@@ -1309,12 +1316,17 @@ function SocialPreview({
           </p>
         </div>
       </div>
-      {assets[0]?.publicUrl ? (
+      {assets[0]?.publicUrl || assets[0]?.sourceUrl ? (
         <div className="relative aspect-square overflow-hidden bg-slate-100">
           <img
-            src={assets[0].publicUrl}
+            src={(assets[0].publicUrl ?? assets[0].sourceUrl) || undefined}
             alt={assets[0].altText ?? mediaTitle(assets[0])}
             className="h-full w-full object-cover"
+            onError={(e) => {
+              if (assets[0].sourceUrl && e.currentTarget.src !== assets[0].sourceUrl) {
+                e.currentTarget.src = assets[0].sourceUrl;
+              }
+            }}
           />
           {assets.length > 1 && (
             <Badge className="absolute top-3 right-3 bg-white/90">1/{assets.length}</Badge>
