@@ -47,15 +47,15 @@ export type NextAction =
   | { kind: "CONNECT_SOCIAL" }
   | { kind: "ALL_CLEAR"; nextScheduledAt: string | null };
 
-/** Environ 36 secondes par publication, jamais moins d'une minute annoncée. */
+/** Environ 36 secondes par publication, jamais moins d’une minute annoncée. */
 function estimateMinutes(count: number): number {
   return Math.max(1, Math.round(count * 0.6));
 }
 
 /**
- * Traduit l'état du compte en la seule chose à faire maintenant.
- * L'ordre des tests EST la règle produit : ce qui bloque la publication passe avant
- * ce qui l'améliore.
+ * Traduit l’état du compte en la seule chose à faire maintenant.
+ * L’ordre des tests EST la règle produit : ce qui bloque la publication passe avant
+ * ce qui l’améliore.
  */
 export function resolveNextAction(snapshot: TodaySnapshot): NextAction {
   if (snapshot.import.status === "FAILED") {
