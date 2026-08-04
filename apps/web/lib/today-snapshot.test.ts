@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildTodaySnapshot, type TodayCounts } from "./today-snapshot";
+import type { TodaySnapshot } from "./today-snapshot";
 
 function counts(overrides: Partial<TodayCounts> = {}): TodayCounts {
   return {
@@ -24,9 +25,10 @@ function counts(overrides: Partial<TodayCounts> = {}): TodayCounts {
   };
 }
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 describe("buildTodaySnapshot", () => {
   it("traduit l’absence d’import en statut NONE", () => {
-    const snapshot = buildTodaySnapshot(counts({ latestImport: null }));
+    const snapshot: TodaySnapshot = buildTodaySnapshot(counts({ latestImport: null }));
     expect(snapshot.import).toEqual({
       status: "NONE",
       pagesScanned: 0,
@@ -46,7 +48,7 @@ describe("buildTodaySnapshot", () => {
     ["FAILED", "FAILED"],
     ["CANCELLED", "FAILED"]
   ])("traduit le statut d’import %s en %s", (prismaStatus, expected) => {
-    const snapshot = buildTodaySnapshot(
+    const snapshot: TodaySnapshot = buildTodaySnapshot(
       counts({
         latestImport: {
           status: prismaStatus,
@@ -60,7 +62,7 @@ describe("buildTodaySnapshot", () => {
   });
 
   it("compte les publications par statut, zéro par défaut", () => {
-    const snapshot = buildTodaySnapshot(
+    const snapshot: TodaySnapshot = buildTodaySnapshot(
       counts({ postsByStatus: { PENDING_REVIEW: 5, SCHEDULED: 2 } })
     );
     expect(snapshot.posts).toEqual({
@@ -72,7 +74,7 @@ describe("buildTodaySnapshot", () => {
   });
 
   it("convertit les dates de programmation en chaînes ISO", () => {
-    const snapshot = buildTodaySnapshot(
+    const snapshot: TodaySnapshot = buildTodaySnapshot(
       counts({
         upcoming: [
           {
@@ -89,7 +91,7 @@ describe("buildTodaySnapshot", () => {
   });
 
   it("reporte le catalogue et la marque sans transformation", () => {
-    const snapshot = buildTodaySnapshot(
+    const snapshot: TodaySnapshot = buildTodaySnapshot(
       counts({ pendingProducts: 42, pendingMedia: 64, validatedProducts: 0, validatedMedia: 0 })
     );
     expect(snapshot.brandName).toBe("Chez Marta");
