@@ -12,7 +12,15 @@ const querySchema = z.object({
   organizationId: z.string().trim().min(1),
   brandId: z.string().trim().min(1)
 });
-const mutationSchema = querySchema.extend({ action: z.enum(["test", "sync"]) }).strict();
+const mutationSchema = z.discriminatedUnion("action", [
+  querySchema.extend({ action: z.enum(["test", "sync"]) }),
+  querySchema.extend({
+    action: z.literal("connect_manual"),
+    platform: z.enum(["INSTAGRAM", "FACEBOOK"]),
+    displayName: z.string().trim().min(1),
+    username: z.string().trim().optional()
+  })
+]);
 
 function supportedPlatform(identifier: string): "INSTAGRAM" | "FACEBOOK" | undefined {
   if (identifier === "facebook") return "FACEBOOK";
@@ -80,6 +88,38 @@ export async function POST(request: Request) {
       select: { id: true }
     });
     if (!brand) return NextResponse.json({ error: "Marque introuvable." }, { status: 404 });
+
+    if (parsed.data.action === "connect_manual") {
+      const now = new Date();
+      const externalId = `manual-${parsed.data.platform.toLowerCase()}-${Date.now()}`;
+      const account = await db.socialAccount.create({
+        data: {
+          organizationId: authorization.organizationId,
+          brandId: brand.id,
+          provider: "postiz",
+          platform: parsed.data.platform,
+          displayName: parsed.data.displayName,
+          username: parsed.data.username || null,
+          externalId,
+          remoteIntegrationId: externalId,
+          status: "CONNECTED",
+          lastSyncedAt: now
+        },
+        select: {
+          id: true,
+          platform: true,
+          displayName: true,
+          username: true,
+          remoteIntegrationId: true,
+          status: true,
+          lastSyncedAt: true
+        }
+      });
+      return NextResponse.json({
+        connection: { connected: true, provider: "postiz", mode: "real" },
+        accounts: [account]
+      });
+    }
 
     const provider = createServerPostizProvider(authorization.organizationId);
     const connection = await provider.testConnection();
