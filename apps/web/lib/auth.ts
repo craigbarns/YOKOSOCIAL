@@ -5,6 +5,11 @@ import { nextCookies } from "better-auth/next-js";
 
 const LOCAL_BASE_URL = "http://localhost:3000";
 const MINIMUM_SECRET_LENGTH = 32;
+/**
+ * Secret utilisé uniquement hors production (développement local, démo) quand
+ * aucun secret n’est configuré. Jamais utilisé si `NODE_ENV=production`.
+ */
+const DEV_ONLY_FALLBACK_SECRET = "yokosocial-dev-only-secret-never-deploy-this-value";
 
 export type AuthEnvironment = Readonly<Record<string, string | undefined>>;
 
@@ -41,7 +46,7 @@ function normalizeHTTPOrigin(value: string, variableName: string, production: bo
   }
 
   if (production && parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
-    parsed.protocol = "https:";
+    throw new AuthConfigurationError(`${variableName} doit utiliser HTTPS en production.`);
   }
 
   return parsed.origin;
@@ -88,15 +93,29 @@ function validateDatabaseURL(environment: AuthEnvironment): void {
   }
 }
 
-function resolveSecret(environment: AuthEnvironment): string {
+function resolveSecret(environment: AuthEnvironment, production: boolean): string {
   const rawSecret = environment.BETTER_AUTH_SECRET ?? environment.AUTH_SECRET;
 
-  if (!rawSecret || rawSecret.includes("${{REF}}") || rawSecret.includes("VALUE or")) {
-    return "feedpulse_default_auth_secret_key_32_chars_long_production_safe";
+  if (rawSecret && (rawSecret.includes("${{REF}}") || rawSecret.includes("VALUE or"))) {
+    throw new AuthConfigurationError(
+      "BETTER_AUTH_SECRET (ou AUTH_SECRET) contient une référence de variable non résolue ; définissez une valeur littérale d’au moins 32 caractères."
+    );
+  }
+
+  if (!rawSecret) {
+    if (production) {
+      throw new AuthConfigurationError(
+        "BETTER_AUTH_SECRET ou AUTH_SECRET est requis en production."
+      );
+    }
+
+    return DEV_ONLY_FALLBACK_SECRET;
   }
 
   if (rawSecret.length < MINIMUM_SECRET_LENGTH) {
-    return rawSecret.padEnd(MINIMUM_SECRET_LENGTH, "0");
+    throw new AuthConfigurationError(
+      "BETTER_AUTH_SECRET (ou AUTH_SECRET) doit contenir au moins 32 caractères."
+    );
   }
 
   return rawSecret;
@@ -121,11 +140,12 @@ export function resolveTrustedOrigins(
 export function resolveAuthRuntimeConfig(
   environment: AuthEnvironment = process.env
 ): AuthRuntimeConfig {
+  const production = isProduction(environment);
   validateDatabaseURL(environment);
 
   return Object.freeze({
     baseURL: resolveBaseURL(environment),
-    secret: resolveSecret(environment),
+    secret: resolveSecret(environment, production),
     trustedOrigins: resolveTrustedOrigins(environment)
   });
 }
