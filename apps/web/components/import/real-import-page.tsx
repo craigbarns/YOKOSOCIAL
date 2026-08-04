@@ -807,7 +807,7 @@ export function RealImportPage() {
                         <div className="relative aspect-[4/3] bg-slate-100">
                           {media.publicUrl || media.sourceUrl ? (
                             <img
-                              src={media.publicUrl ?? media.sourceUrl}
+                              src={(media.publicUrl ?? media.sourceUrl) || undefined}
                               alt={media.detectedTitle ?? media.originalName}
                               className="h-full w-full object-cover"
                               onError={(e) => {

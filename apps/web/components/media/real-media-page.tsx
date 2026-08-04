@@ -458,7 +458,7 @@ export function RealMediaPage() {
                 >
                   {asset.publicUrl || asset.sourceUrl ? (
                     <img
-                      src={asset.publicUrl ?? asset.sourceUrl}
+                      src={(asset.publicUrl ?? asset.sourceUrl) || undefined}
                       alt={asset.altText ?? mediaTitle(asset)}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                       onError={(e) => {
