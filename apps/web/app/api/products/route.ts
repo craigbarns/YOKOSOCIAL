@@ -48,6 +48,7 @@ const productSelection = {
     select: {
       id: true,
       publicUrl: true,
+      sourceUrl: true,
       width: true,
       height: true,
       qualityScore: true,

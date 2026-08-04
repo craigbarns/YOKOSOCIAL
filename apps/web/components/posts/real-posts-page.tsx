@@ -1323,8 +1323,9 @@ function SocialPreview({
             alt={assets[0].altText ?? mediaTitle(assets[0])}
             className="h-full w-full object-cover"
             onError={(e) => {
-              if (assets[0].sourceUrl && e.currentTarget.src !== assets[0].sourceUrl) {
-                e.currentTarget.src = assets[0].sourceUrl;
+              const fallback = assets[0]?.sourceUrl;
+              if (fallback && e.currentTarget.src !== fallback) {
+                e.currentTarget.src = fallback;
               }
             }}
           />

@@ -190,6 +190,7 @@ export type RealProduct = {
   recommendedMedia?: {
     id: string;
     publicUrl: string | null;
+    sourceUrl?: string | null;
     width?: number | null;
     height?: number | null;
     qualityScore?: number;
