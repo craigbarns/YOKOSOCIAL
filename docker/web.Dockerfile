@@ -23,6 +23,7 @@ COPY --chown=node:node --from=builder /app/apps/web/.next/static ./apps/web/.nex
 COPY --chown=node:node --from=builder /app/apps/web/public ./apps/web/public
 COPY --chown=node:node --from=builder /app/packages/database ./packages/database
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
+RUN mkdir -p apps/web/public/uploads && chown -R node:node /app
 USER node
 CMD ["node", "apps/web/server.js"]
 

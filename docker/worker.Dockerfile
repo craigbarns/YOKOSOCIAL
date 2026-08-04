@@ -13,5 +13,7 @@ RUN npm install
 COPY apps/worker apps/worker
 RUN npx turbo run build --filter=@yokosocial/worker...
 
+RUN mkdir -p apps/web/public/uploads && chown -R pwuser:pwuser /app
+
 USER pwuser
 CMD ["npm", "run", "start", "--workspace", "@yokosocial/worker"]
