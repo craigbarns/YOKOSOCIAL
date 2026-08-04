@@ -456,11 +456,16 @@ export function RealMediaPage() {
                     )
                   }
                 >
-                  {asset.publicUrl ? (
+                  {asset.publicUrl || asset.sourceUrl ? (
                     <img
-                      src={asset.publicUrl}
+                      src={asset.publicUrl ?? asset.sourceUrl}
                       alt={asset.altText ?? mediaTitle(asset)}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                      onError={(e) => {
+                        if (asset.sourceUrl && e.currentTarget.src !== asset.sourceUrl) {
+                          e.currentTarget.src = asset.sourceUrl;
+                        }
+                      }}
                     />
                   ) : (
                     <span className="grid h-full place-items-center text-slate-300">

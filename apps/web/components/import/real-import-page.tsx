@@ -805,11 +805,16 @@ export function RealImportPage() {
                         )}
                       >
                         <div className="relative aspect-[4/3] bg-slate-100">
-                          {media.publicUrl ? (
+                          {media.publicUrl || media.sourceUrl ? (
                             <img
-                              src={media.publicUrl}
+                              src={media.publicUrl ?? media.sourceUrl}
                               alt={media.detectedTitle ?? media.originalName}
                               className="h-full w-full object-cover"
+                              onError={(e) => {
+                                if (media.sourceUrl && e.currentTarget.src !== media.sourceUrl) {
+                                  e.currentTarget.src = media.sourceUrl;
+                                }
+                              }}
                             />
                           ) : (
                             <div className="grid h-full place-items-center text-xs text-slate-400">
