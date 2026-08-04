@@ -2,8 +2,6 @@ import { getSessionCookie } from "better-auth/cookies";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { isPublicDemoMode, isServerDemoMode } from "@/lib/demo-mode";
-
 export function proxy(request: NextRequest) {
   const demoSession = request.cookies.get("yokosocial-demo-session")?.value;
   const productionSession = getSessionCookie(request, { cookiePrefix: "yokosocial" });
