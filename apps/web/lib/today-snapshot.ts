@@ -31,7 +31,6 @@ const IMPORT_STATUS_MAP: Record<string, ImportSnapshotStatus> = {
   CANCELLED: "FAILED"
 };
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 export function buildTodaySnapshot(counts: TodayCounts): TodaySnapshot {
   const latest = counts.latestImport;
   return {
