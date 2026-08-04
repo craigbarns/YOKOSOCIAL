@@ -6,6 +6,7 @@ import { z } from "zod";
 import { accessErrorResponse, readJsonWithLimit } from "@/lib/api-access";
 import { requireOrganization, requireTrustedMutationOrigin } from "@/lib/authorization";
 import { enqueueTenantJob, QueueUnavailableError } from "@/lib/job-queue";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -52,6 +53,14 @@ export async function POST(request: Request) {
       ["OWNER", "ADMIN", "EDITOR"],
       request.headers
     );
+
+    const rateLimit = checkRateLimit(`gen_${authorization.organizationId}`, {
+      limit: 10,
+      windowMs: 60_000
+    });
+    if (!rateLimit.allowed) {
+      return rateLimitResponse(rateLimit.resetMs);
+    }
     const brand = await db.restaurantBrand.findFirst({
       where: { id: parsed.data.brandId, organizationId: authorization.organizationId },
       select: { id: true, name: true }
