@@ -58,23 +58,33 @@ export async function POST(request: Request) {
     });
     if (!brand) return NextResponse.json({ error: "Marque introuvable." }, { status: 404 });
 
-    const existingCampaign = await db.contentCampaign.findFirst({
+    await db.contentCampaign.updateMany({
       where: {
         organizationId: authorization.organizationId,
         brandId: brand.id,
         status: { in: ["DRAFT", "ACTIVE"] },
-        createdAt: { gte: new Date(Date.now() - 10 * 60_000) }
+        createdAt: { lt: new Date(Date.now() - 60_000) }
+      },
+      data: { status: "CANCELLED" }
+    });
+
+    const existingCampaign = await db.contentCampaign.findFirst({
+      where: {
+        organizationId: authorization.organizationId,
+        brandId: brand.id,
+        status: "ACTIVE",
+        createdAt: { gte: new Date(Date.now() - 60_000) }
       },
       select: { id: true, status: true }
     });
     if (existingCampaign) {
       return NextResponse.json(
         {
-          error: "Une génération est déjà en cours ou vient d’être demandée.",
+          error: "Une génération est déjà en cours. Veuillez patienter quelques secondes.",
           campaignId: existingCampaign.id,
           status: existingCampaign.status
         },
-        { status: 409, headers: { "Retry-After": "30" } }
+        { status: 409, headers: { "Retry-After": "10" } }
       );
     }
 
