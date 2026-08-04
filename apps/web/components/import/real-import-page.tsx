@@ -11,6 +11,7 @@ import {
   PackageOpen,
   RefreshCw,
   Search,
+  Sparkles,
   Store,
   XCircle
 } from "lucide-react";
@@ -429,6 +430,16 @@ export function RealImportPage() {
     setMediaDecisions((current) => ({ ...current, [id]: decision }));
   }
 
+  function approveAllItems() {
+    const allDataIds = unreviewedData.map((item) => item.id);
+    setApprovedDataIds(new Set(allDataIds));
+    const bulkMedia: Record<string, ImportMediaDecision> = {};
+    for (const item of mediaAwaitingDecision) {
+      bulkMedia[item.id] = "APPROVED";
+    }
+    setMediaDecisions(bulkMedia);
+  }
+
   async function confirmReview() {
     if (!workspace || !websiteImport) return;
     if (mediaIngestionPending || undecidedMediaCount > 0) {
@@ -635,6 +646,28 @@ export function RealImportPage() {
               </div>
             </CardContent>
           </Card>
+
+          {websiteImport.status === "WAITING_FOR_REVIEW" && (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-amber-50 p-5 shadow-xs">
+              <div>
+                <p className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles className="size-5 text-rose-500 animate-pulse" />
+                  Gain de temps : Validez votre catalogue et photos en 1 clic !
+                </p>
+                <p className="mt-1 text-xs text-slate-600">
+                  Approuvez automatiquement l’ensemble des plats, tarifs et photos détectés pour alimenter votre médiathèque sans effort.
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="lg"
+                onClick={approveAllItems}
+                className="bg-rose-600 text-white hover:bg-rose-700 shadow-md font-semibold"
+              >
+                <CheckCircle2 className="mr-2 size-5" /> Tout approuver (1 clic)
+              </Button>
+            </div>
+          )}
 
           {failedMediaCandidates.length > 0 && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">

@@ -247,6 +247,32 @@ export function RealDashboardPage() {
             )}
           </div>
 
+          <div className="mb-6 rounded-2xl border border-rose-100 bg-gradient-to-r from-rose-50/70 via-white to-amber-50/70 p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Sparkles className="size-5 text-rose-500" />
+                Guide FeedPulse en 3 étapes simples
+              </h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Link href="/import" className="group rounded-xl border border-white bg-white/90 p-4 transition hover:border-rose-300 hover:shadow-sm">
+                <span className="inline-flex size-7 items-center justify-center rounded-lg bg-rose-600 text-xs font-bold text-white mb-2.5">1</span>
+                <h3 className="font-bold text-sm text-slate-900 group-hover:text-rose-600">Import de votre site</h3>
+                <p className="text-xs text-slate-500 mt-1">Récupérez automatiquement vos photos et votre carte depuis votre site web.</p>
+              </Link>
+              <Link href="/import" className="group rounded-xl border border-white bg-white/90 p-4 transition hover:border-rose-300 hover:shadow-sm">
+                <span className="inline-flex size-7 items-center justify-center rounded-lg bg-rose-600 text-xs font-bold text-white mb-2.5">2</span>
+                <h3 className="font-bold text-sm text-slate-900 group-hover:text-rose-600">Validation en 1 clic</h3>
+                <p className="text-xs text-slate-500 mt-1">Approuvez votre catalogue et vos visuels d'un simple clic rapide.</p>
+              </Link>
+              <Link href="/posts" className="group rounded-xl border border-white bg-white/90 p-4 transition hover:border-rose-300 hover:shadow-sm">
+                <span className="inline-flex size-7 items-center justify-center rounded-lg bg-rose-600 text-xs font-bold text-white mb-2.5">3</span>
+                <h3 className="font-bold text-sm text-slate-900 group-hover:text-rose-600">Génération & Publication IA</h3>
+                <p className="text-xs text-slate-500 mt-1">Générez et planifiez vos publications Instagram et Facebook en quelques secondes.</p>
+              </Link>
+            </div>
+          </div>
+
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {metrics.map((metric) => (
               <Card key={metric.label}>
