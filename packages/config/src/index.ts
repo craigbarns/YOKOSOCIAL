@@ -92,32 +92,7 @@ export const envSchema = z
       });
     }
     if (env.POSTIZ_MODE === "real" && !env.POSTIZ_API_KEY) {
-      context.addIssue({
-        code: "custom",
-        path: ["POSTIZ_API_KEY"],
-        message: "POSTIZ_API_KEY est requise en mode Postiz réel."
-      });
-    }
-    if (env.POSTIZ_MODE === "real" && !env.POSTIZ_ORGANIZATION_ID) {
-      context.addIssue({
-        code: "custom",
-        path: ["POSTIZ_ORGANIZATION_ID"],
-        message: "POSTIZ_ORGANIZATION_ID lie la clé Postiz à une seule organisation."
-      });
-    }
-    if (env.POSTIZ_MODE === "real" && env.STORAGE_MODE !== "s3") {
-      context.addIssue({
-        code: "custom",
-        path: ["STORAGE_MODE"],
-        message: "Le mode Postiz réel exige le stockage S3."
-      });
-    }
-    if (env.POSTIZ_MODE === "real" && !env.S3_PUBLIC_URL) {
-      context.addIssue({
-        code: "custom",
-        path: ["S3_PUBLIC_URL"],
-        message: "S3_PUBLIC_URL est requis pour charger les médias à publier."
-      });
+      console.warn("[config] POSTIZ_MODE=real mais POSTIZ_API_KEY non spécifiée. Le mode réel utilisera les clés dynamiques si présentes.");
     }
     if (env.STORAGE_MODE === "s3") {
       for (const field of ["S3_BUCKET", "S3_ACCESS_KEY", "S3_SECRET_KEY"] as const) {
