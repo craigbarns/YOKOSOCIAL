@@ -1040,14 +1040,15 @@ export function RealPostsPage() {
                           {mediaPagination.total}. La médiathèque permet de retrouver les autres.
                         </p>
                       )}
-                      <div className="mt-2 grid max-h-72 grid-cols-3 gap-2 overflow-y-auto rounded-xl bg-slate-50 p-2 sm:grid-cols-4">
+                      <div className="mt-2 grid max-h-80 grid-cols-3 gap-2.5 overflow-y-auto rounded-xl bg-slate-100 p-2.5 sm:grid-cols-4">
                         {approvedMedia.map((asset) => {
                           const checked = form.mediaAssetIds.includes(asset.id);
+                          const title = mediaTitle(asset);
                           return (
                             <button
                               key={asset.id}
                               type="button"
-                              title={mediaTitle(asset)}
+                              title={title}
                               onClick={() =>
                                 setForm({
                                   ...form,
@@ -1057,23 +1058,28 @@ export function RealPostsPage() {
                                 })
                               }
                               className={cn(
-                                "relative aspect-square overflow-hidden rounded-lg bg-slate-200 ring-2 ring-transparent",
-                                checked && "ring-rose-500"
+                                "group relative aspect-square overflow-hidden rounded-xl bg-slate-900 ring-2 transition-all duration-150 hover:scale-[1.02]",
+                                checked
+                                  ? "ring-2 ring-rose-500 shadow-md"
+                                  : "ring-1 ring-slate-200/50 opacity-85 hover:opacity-100"
                               )}
                             >
                               <img
                                 src={(asset.publicUrl ?? asset.sourceUrl) || undefined}
-                                alt={asset.altText ?? mediaTitle(asset)}
-                                className="h-full w-full object-cover"
+                                alt={asset.altText ?? title}
+                                className="h-full w-full object-contain p-1.5 transition-transform duration-200 group-hover:scale-105"
                                 onError={(e) => {
                                   if (asset.sourceUrl && e.currentTarget.src !== asset.sourceUrl) {
                                     e.currentTarget.src = asset.sourceUrl;
                                   }
                                 }}
                               />
+                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent p-1.5 text-left opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                <p className="truncate text-[10px] font-medium text-white">{title}</p>
+                              </div>
                               {checked && (
-                                <span className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-rose-500 text-white">
-                                  <Check className="size-3" />
+                                <span className="absolute top-1.5 right-1.5 grid size-5 place-items-center rounded-full bg-rose-500 text-white shadow-sm ring-2 ring-white">
+                                  <Check className="size-3 stroke-[3]" />
                                 </span>
                               )}
                             </button>
