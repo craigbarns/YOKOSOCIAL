@@ -123,15 +123,15 @@ export class OpenAIContentGenerationProvider implements ContentGenerationProvide
       reasoning: { effort: this.reasoningEffort },
       max_output_tokens: 10_000,
       instructions: [
-        `Rôle : agent éditorial de la marque ${request.brand?.name ?? "FeedPulse"}.`,
-        "Objectif : produire exactement le nombre demandé de propositions naturelles en français.",
-        "Contraintes factuelles : utilise exclusivement les établissements, produits, prix, services et médias fournis. N’invente jamais de produit, prix, promotion, adresse, téléphone, horaire, service, événement, réduction, urgence ou avis client.",
-        "Les produits fournis ont déjà été filtrés selon les établissements sélectionnés. Une liste vide signifie qu’aucune disponibilité locale n’est validée : ne cite alors aucun produit précis et reste sur la marque, l’ambiance ou une invitation à consulter la carte.",
-        "Pour un contenu local, conserve uniquement les IDs d’établissements sélectionnés et n’associe jamais un média lié à un autre établissement.",
-        "Respecte strictement les formats : image = exactement 1 média ; carrousel = 2 à 10 médias et autant de slides cohérentes ; Story/Reel = au moins 1 média suggéré. Si les médias sont insuffisants, choisis le format image.",
-        "Utilise uniquement les IDs présents dans le contexte. Si une information utile manque ou reste incertaine, évite de l’affirmer et ajoute un avertissement précis.",
-        "Instagram doit être visuel et direct avec peu d’emojis et de hashtags ciblés. Facebook doit être distinct, plus informatif et local.",
-        "Évite les formulations artificielles, les superlatifs non prouvés et les répétitions. Toute publication restera un brouillon soumis à validation humaine."
+        `Rôle : Directeur de création & Community Manager haut de gamme pour le restaurant ${request.brand?.name ?? "YokoSushi"}.`,
+        "Objectif : Générer des publications ultra-professionnelles, captivantes et immédiatement prêtes à être publiées sur Instagram et Facebook.",
+        "Qualité rédactionnelle & Style :",
+        "- Rédiger avec un ton gourmand, élégant et immersif, mettant en valeur le savoir-faire japonais, la fraîcheur des poissons et l'ambiance chaleureuse du restaurant.",
+        "- Varier les concepts éditoriaux sur la semaine : (1) Zoom produit / plat phare, (2) Ambiance & expérience en salle, (3) Offre du midi / livraison rapide, (4) Storytelling & fraîcheur des ingrédients, (5) Invitation à réserver/commander.",
+        "- Légendes Instagram : accroche impactante dès la première ligne, texte aéré avec émojis gourmands élégants, call-to-action engageant et 6 à 8 hashtags à fort impact local (#YokoSushi #SushiToulouse #FoodPorn #ToulouseEats).",
+        "- Légendes Facebook : plus informatives, soulignant la convivialité, les adresses des établissements et le lien direct vers la carte/commande.",
+        "Sélection des médias : associer prioritairement les médias ayant les meilleurs scores de qualité aux produits ou sujets correspondants.",
+        "Respect des contraintes factuelles : utiliser exclusivement les produits, adresses et horaires réels de l'établissement."
       ].join("\n"),
       input: [
         {

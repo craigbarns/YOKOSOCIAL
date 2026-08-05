@@ -4,6 +4,7 @@ import { Badge, Button, Card, CardContent, cn } from "@yokosocial/ui";
 import {
   AlertTriangle,
   Check,
+  CheckCircle2,
   ChevronRight,
   Clock3,
   Facebook,
@@ -323,6 +324,34 @@ export function RealPostsPage() {
     return () => window.clearInterval(interval);
   }, [loadData, publicationPollInterval]);
 
+  async function approveAndScheduleAllPosts() {
+    if (!workspace) return;
+    setMutating(true);
+    setError(undefined);
+    setNotice(undefined);
+    try {
+      let approvedCount = 0;
+      for (const post of posts) {
+        if (post.status === "PENDING_REVIEW" || post.status === "DRAFT") {
+          await requestJson(`/api/posts/${post.id}/transition`, {
+            method: "POST",
+            body: JSON.stringify({
+              organizationId: workspace.organizationId,
+              action: post.status === "DRAFT" ? "submit" : "approve"
+            })
+          });
+          approvedCount++;
+        }
+      }
+      setNotice(`✨ ${approvedCount} publication(s) validée(s) et prêtes pour la diffusion !`);
+      await loadData(true);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Approbation globale impossible.");
+    } finally {
+      setMutating(false);
+    }
+  }
+
   async function generatePosts() {
     if (!workspace || !canEditPosts || generationPlatforms.length === 0) return;
     setMutating(true);
@@ -610,6 +639,44 @@ export function RealPostsPage() {
             {pollingIntervalLabel(publicationPollInterval)}
           </span>
         )}
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-950 via-slate-900 to-rose-900 p-6 text-white shadow-lg">
+        <div className="max-w-xl">
+          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-rose-300">
+            <Sparkles className="size-4 animate-pulse" /> Autopilote Éditorial IA · Qualité Ultra Pro
+          </div>
+          <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+            Vos 5 publications de la semaine générées par OpenAI
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-slate-300">
+            Légendes captivantes spécialisées gastronomie japonaise, association automatique avec vos meilleures photos et programmation uniforme sur la semaine.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="lg"
+            onClick={() => void generatePosts()}
+            disabled={mutating || Boolean(campaignId)}
+            className="bg-rose-500 font-bold text-white hover:bg-rose-600 shadow-md"
+          >
+            {campaignId ? (
+              <LoaderCircle className="size-5 animate-spin mr-2" />
+            ) : (
+              <WandSparkles className="size-5 mr-2" />
+            )}
+            {campaignId ? "Génération OpenAI en cours…" : "✨ Générer la semaine"}
+          </Button>
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => void approveAndScheduleAllPosts()}
+            disabled={mutating || posts.length === 0}
+            className="bg-white/10 font-bold text-white hover:bg-white/20 border border-white/20"
+          >
+            <CheckCircle2 className="size-5 mr-2 text-emerald-400" /> Tout valider (1 clic)
+          </Button>
+        </div>
       </div>
 
       {(workspaceError || error) && (
@@ -973,14 +1040,15 @@ export function RealPostsPage() {
                           {mediaPagination.total}. La médiathèque permet de retrouver les autres.
                         </p>
                       )}
-                      <div className="mt-2 grid max-h-72 grid-cols-3 gap-2 overflow-y-auto rounded-xl bg-slate-50 p-2 sm:grid-cols-4">
+                      <div className="mt-2 grid max-h-80 grid-cols-3 gap-2.5 overflow-y-auto rounded-xl bg-slate-100 p-2.5 sm:grid-cols-4">
                         {approvedMedia.map((asset) => {
                           const checked = form.mediaAssetIds.includes(asset.id);
+                          const title = mediaTitle(asset);
                           return (
                             <button
                               key={asset.id}
                               type="button"
-                              title={mediaTitle(asset)}
+                              title={title}
                               onClick={() =>
                                 setForm({
                                   ...form,
@@ -990,23 +1058,28 @@ export function RealPostsPage() {
                                 })
                               }
                               className={cn(
-                                "relative aspect-square overflow-hidden rounded-lg bg-slate-200 ring-2 ring-transparent",
-                                checked && "ring-rose-500"
+                                "group relative aspect-square overflow-hidden rounded-xl bg-slate-900 ring-2 transition-all duration-150 hover:scale-[1.02]",
+                                checked
+                                  ? "ring-2 ring-rose-500 shadow-md"
+                                  : "ring-1 ring-slate-200/50 opacity-85 hover:opacity-100"
                               )}
                             >
                               <img
                                 src={(asset.publicUrl ?? asset.sourceUrl) || undefined}
-                                alt={asset.altText ?? mediaTitle(asset)}
-                                className="h-full w-full object-cover"
+                                alt={asset.altText ?? title}
+                                className="h-full w-full object-contain p-1.5 transition-transform duration-200 group-hover:scale-105"
                                 onError={(e) => {
                                   if (asset.sourceUrl && e.currentTarget.src !== asset.sourceUrl) {
                                     e.currentTarget.src = asset.sourceUrl;
                                   }
                                 }}
                               />
+                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent p-1.5 text-left opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                <p className="truncate text-[10px] font-medium text-white">{title}</p>
+                              </div>
                               {checked && (
-                                <span className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-rose-500 text-white">
-                                  <Check className="size-3" />
+                                <span className="absolute top-1.5 right-1.5 grid size-5 place-items-center rounded-full bg-rose-500 text-white shadow-sm ring-2 ring-white">
+                                  <Check className="size-3 stroke-[3]" />
                                 </span>
                               )}
                             </button>

@@ -1123,6 +1123,7 @@ model SocialPost {
   media              SocialPostMedia[]
   publicationJobs    PublicationJob[]
   analytics          AnalyticsSnapshot[]
+  postAnalytics      PostAnalytics?
   feedback           UserFeedback[]
 
   @@index([organizationId])
@@ -1329,4 +1330,23 @@ model AuditLog {
   @@index([organizationId])
   @@index([organizationId, entityType, entityId])
   @@index([createdAt])
+}
+
+model PostAnalytics {
+  id           String      @id @default(cuid())
+  socialPostId String      @unique
+  socialPost   SocialPost  @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+  impressions  Int?
+  engagements  Int?
+  likes        Int?
+  comments     Int?
+  shares       Int?
+  reach        Int?
+  clicks       Int?
+  saves        Int?
+  collectedAt  DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([socialPostId])
+  @@index([collectedAt])
 }
