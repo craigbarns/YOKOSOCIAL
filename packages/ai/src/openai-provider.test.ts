@@ -1,7 +1,11 @@
 import type OpenAI from "openai";
+import { zodTextFormat } from "openai/helpers/zod";
 import { describe, expect, it, vi } from "vitest";
 
-import { OpenAIContentGenerationProvider } from "./openai-provider.js";
+import {
+  OpenAIContentGenerationProvider,
+  openAIGenerationEnvelopeSchema
+} from "./openai-provider.js";
 import type { GenerationRequest } from "./types.js";
 
 function generationRequest(): GenerationRequest {
@@ -85,5 +89,14 @@ describe("OpenAIContentGenerationProvider", () => {
     expect(request.reasoning.effort).toBe("none");
     expect(request.safety_identifier).toMatch(/^[a-f0-9]{64}$/);
     expect(JSON.stringify(request.input)).not.toContain("org-secret-internal-id");
+  });
+
+  it("n’envoie aucun échappement Unicode dans le schéma de sortie structurée", () => {
+    // Les sorties structurées d’OpenAI rejettent la requête entière avec « Invalid schema
+    // for response_format » dès qu’un motif contient un échappement `\p{…}`. La génération
+    // de publications échouait ainsi à chaque appel en mode IA réel.
+    const format = zodTextFormat(openAIGenerationEnvelopeSchema, "yokosushi_social_posts");
+
+    expect(JSON.stringify(format)).not.toContain("\\p{");
   });
 });

@@ -34,7 +34,11 @@ const wirePostSchema = z.object({
   instagramCaption: z.string().max(2_200).nullable(),
   facebookCaption: z.string().max(5_000).nullable(),
   callToAction: z.string().min(1).max(180),
-  hashtags: z.array(z.string().regex(/^#[\p{L}\p{N}_]+$/u)).max(12),
+  // Aucune expression régulière ici : les sorties structurées d’OpenAI refusent les
+  // échappements Unicode `\p{…}` et rejettent la requête entière avec « Invalid schema
+  // for response_format ». La forme des hashtags reste garantie par `generatedPostSchema`
+  // de @yokosocial/shared, qui revalide chaque publication après réception.
+  hashtags: z.array(z.string()).max(12),
   mediaAssetIds: z.array(z.string().min(1)).max(10),
   suggestedAt: z.iso.datetime({ offset: true }).nullable(),
   reelScript: z.string().max(3_000).nullable(),
