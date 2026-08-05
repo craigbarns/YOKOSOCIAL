@@ -27,9 +27,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let event: { type?: string; postId?: string; status?: string; publishedAt?: string };
+  type PostizWebhookEvent = {
+    type?: string;
+    postId?: string;
+    status?: string;
+    publishedAt?: string;
+  };
+
+  let event: PostizWebhookEvent;
   try {
-    event = JSON.parse(body);
+    // `JSON.parse` rend `any` : l’assertion explicite est le motif déjà utilisé ailleurs
+    // dans le dépôt pour franchir cette frontière non typée.
+    event = JSON.parse(body) as PostizWebhookEvent;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }

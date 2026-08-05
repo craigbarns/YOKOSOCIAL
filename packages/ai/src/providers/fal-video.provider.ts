@@ -1,9 +1,10 @@
 import { fal } from "@fal-ai/client";
-import { z } from "zod";
 
-const FalVideoConfig = z.object({
-  apiKey: z.string()
-});
+// Type simple plutôt que schéma zod : cette configuration n’est jamais validée à
+// l’exécution, le schéma ne servait qu’à dériver un type via `z.infer`.
+type FalVideoConfig = {
+  apiKey: string;
+};
 
 export interface ReelGenerationParams {
   productName: string;
@@ -23,7 +24,7 @@ export interface ReelResult {
 export class FalVideoProvider {
   private initialized = false;
 
-  constructor(private config: z.infer<typeof FalVideoConfig>) {}
+  constructor(private config: FalVideoConfig) {}
 
   private ensureInitialized() {
     if (this.initialized) return;

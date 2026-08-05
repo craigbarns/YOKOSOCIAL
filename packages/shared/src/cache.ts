@@ -28,15 +28,20 @@ export async function getCachedOrFetch<T>(
   return data;
 }
 
-export async function invalidateCache(pattern: string): Promise<void> {
+// Ces deux fonctions restent asynchrones dans leur signature : le cache est en mémoire
+// aujourd’hui, mais l’appelant doit pouvoir les attendre sans changer d’API le jour où
+// un Redis passera derrière. Elles ne sont pas déclarées `async` faute d’`await` à faire.
+export function invalidateCache(pattern: string): Promise<void> {
   const prefix = pattern.replace(/\*/g, "");
   for (const key of inMemoryCache.keys()) {
     if (key.startsWith(prefix)) {
       inMemoryCache.delete(key);
     }
   }
+  return Promise.resolve();
 }
 
-export async function deleteCache(key: string): Promise<void> {
+export function deleteCache(key: string): Promise<void> {
   inMemoryCache.delete(key);
+  return Promise.resolve();
 }

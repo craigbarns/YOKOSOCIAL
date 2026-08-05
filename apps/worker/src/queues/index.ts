@@ -1,4 +1,5 @@
-import { Job, Queue, Worker } from "bullmq";
+import type { Job} from "bullmq";
+import { Queue, Worker } from "bullmq";
 import { Redis } from "ioredis";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";

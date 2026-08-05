@@ -1,6 +1,6 @@
 import { db } from "@yokosocial/database";
 import { postizBreaker } from "@yokosocial/shared";
-import { Job } from "bullmq";
+import type { Job } from "bullmq";
 
 export async function analyticsSyncProcessor(job: Job) {
   const { organizationId } = job.data as { organizationId: string };
@@ -31,8 +31,11 @@ export async function analyticsSyncProcessor(job: Job) {
     if (!item.externalId) continue;
 
     try {
-      await postizBreaker.execute(async () => {
+      // Corps encore vide : la récupération réelle des statistiques Postiz reste à écrire.
+      // `execute` attend une fonction rendant une promesse, d’où le `Promise.resolve()`.
+      await postizBreaker.execute(() => {
         console.log(`[AnalyticsSync] Synced analytics for attempt ${item.id} (post: ${item.publicationJob.socialPostId})`);
+        return Promise.resolve();
       });
     } catch (err) {
       console.error(`[AnalyticsSync] ❌ ${item.id}:`, (err as Error).message);
