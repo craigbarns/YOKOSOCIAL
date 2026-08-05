@@ -69,12 +69,22 @@ function present(action: NextAction): Presentation {
         icon: CircleAlert,
         tone: "amber"
       };
+    case "CONFIRM_IMPORT":
+      return {
+        eyebrow: "À confirmer",
+        title: "Votre import attend votre confirmation.",
+        description:
+          "Rien de nouveau n’a été trouvé depuis la dernière fois. Ouvrez l’aperçu pour clore l’import.",
+        cta: { label: "Ouvrir l’aperçu", href: "/import" },
+        icon: PackageOpen,
+        tone: "amber"
+      };
     case "REVIEW_CATALOG":
       return {
         eyebrow: "À valider",
         title: `${action.products} plats et ${action.media} photos vous attendent.`,
         description: "Un coup d’œil, un clic, et votre carte est en ligne dans l’application.",
-        cta: { label: "Tout valider", href: "/products" },
+        cta: { label: "Vérifier l’aperçu", href: "/import" },
         icon: PackageOpen,
         tone: "rose"
       };

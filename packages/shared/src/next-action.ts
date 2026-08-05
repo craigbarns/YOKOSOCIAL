@@ -41,6 +41,7 @@ export type NextAction =
       imagesDetected: number;
     }
   | { kind: "IMPORT_FAILED" }
+  | { kind: "CONFIRM_IMPORT" }
   | { kind: "FIX_FAILED_POSTS"; count: number }
   | { kind: "REVIEW_CATALOG"; products: number; media: number }
   | { kind: "REVIEW_POSTS"; count: number; estimatedMinutes: number }
@@ -71,6 +72,13 @@ export function resolveNextAction(snapshot: TodaySnapshot): NextAction {
       productsDetected: snapshot.import.productsDetected,
       imagesDetected: snapshot.import.imagesDetected
     };
+  }
+  if (
+    snapshot.import.status === "NEEDS_REVIEW" &&
+    snapshot.catalog.pendingProducts === 0 &&
+    snapshot.catalog.pendingMedia === 0
+  ) {
+    return { kind: "CONFIRM_IMPORT" };
   }
   if (snapshot.posts.failed > 0) {
     return { kind: "FIX_FAILED_POSTS", count: snapshot.posts.failed };

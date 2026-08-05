@@ -1,10 +1,24 @@
 import type { ImportSnapshotStatus, TodaySnapshot } from "@yokosocial/shared";
 
+const IMPORT_STATUS_MAP = {
+  PENDING: "RUNNING",
+  CRAWLING: "RUNNING",
+  ANALYZING: "RUNNING",
+  IMPORTING: "RUNNING",
+  WAITING_FOR_REVIEW: "NEEDS_REVIEW",
+  COMPLETED: "COMPLETED",
+  PARTIALLY_COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+  CANCELLED: "FAILED"
+} satisfies Record<string, ImportSnapshotStatus>;
+
+export type ImportStatusName = keyof typeof IMPORT_STATUS_MAP;
+
 export type TodayCounts = {
   brandName: string;
   websiteUrl: string | null;
   latestImport: {
-    status: string;
+    status: ImportStatusName;
     pagesScanned: number;
     productsDetected: number;
     imagesDetected: number;
@@ -17,18 +31,6 @@ export type TodayCounts = {
   upcoming: Array<{ id: string; title: string; scheduledAt: Date }>;
   connectedSocialAccounts: number;
   appliedCorrections: number;
-};
-
-const IMPORT_STATUS_MAP: Record<string, ImportSnapshotStatus> = {
-  PENDING: "RUNNING",
-  CRAWLING: "RUNNING",
-  ANALYZING: "RUNNING",
-  IMPORTING: "RUNNING",
-  WAITING_FOR_REVIEW: "NEEDS_REVIEW",
-  COMPLETED: "COMPLETED",
-  PARTIALLY_COMPLETED: "COMPLETED",
-  FAILED: "FAILED",
-  CANCELLED: "FAILED"
 };
 
 export function buildTodaySnapshot(counts: TodayCounts): TodaySnapshot {

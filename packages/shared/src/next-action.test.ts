@@ -51,6 +51,26 @@ describe("resolveNextAction", () => {
     expect(action).toEqual({ kind: "IMPORT_FAILED" });
   });
 
+  it("demande de confirmer l’import quand rien de nouveau n’est en attente", () => {
+    const action = resolveNextAction(
+      snapshot({
+        import: { status: "NEEDS_REVIEW", pagesScanned: 12, productsDetected: 0, imagesDetected: 0 },
+        catalog: { pendingProducts: 0, pendingMedia: 0, validatedProducts: 42, validatedMedia: 64 }
+      })
+    );
+    expect(action).toEqual({ kind: "CONFIRM_IMPORT" });
+  });
+
+  it("préfère la validation du catalogue quand des éléments sont en attente", () => {
+    const action = resolveNextAction(
+      snapshot({
+        import: { status: "NEEDS_REVIEW", pagesScanned: 12, productsDetected: 42, imagesDetected: 64 },
+        catalog: { pendingProducts: 42, pendingMedia: 64, validatedProducts: 0, validatedMedia: 0 }
+      })
+    );
+    expect(action).toEqual({ kind: "REVIEW_CATALOG", products: 42, media: 64 });
+  });
+
   it("traite les publications en erreur avant le catalogue", () => {
     const action = resolveNextAction(
       snapshot({

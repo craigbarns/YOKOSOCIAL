@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildTodaySnapshot, type TodayCounts } from "./today-snapshot";
+import { buildTodaySnapshot, type ImportStatusName, type TodayCounts } from "./today-snapshot";
 
 function counts(overrides: Partial<TodayCounts> = {}): TodayCounts {
   return {
@@ -35,7 +35,7 @@ describe("buildTodaySnapshot", () => {
     });
   });
 
-  it.each([
+  it.each<[ImportStatusName, string]>([
     ["PENDING", "RUNNING"],
     ["CRAWLING", "RUNNING"],
     ["ANALYZING", "RUNNING"],

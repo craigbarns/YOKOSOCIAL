@@ -23,10 +23,19 @@ test("Aujourd’hui pose une seule question, qui change avec l’état du compte
   await page.getByRole("link", { name: "Aujourd’hui" }).click();
   await expect(page.getByRole("heading", { name: /plats et .* photos vous attendent/ })).toBeVisible();
 
-  await page.getByRole("link", { name: "Import du site" }).click();
+  await page.getByRole("link", { name: "Vérifier l’aperçu" }).click();
   await page.getByRole("button", { name: "Confirmer l’import" }).click();
 
   await page.getByRole("link", { name: "Aujourd’hui" }).click();
   await expect(page.getByRole("heading", { name: "Rien à faire aujourd’hui." })).toBeVisible();
   await expect(page.getByText("plats validés")).toBeVisible();
+
+  await page.getByRole("link", { name: "Publications" }).click();
+  await page.getByRole("button", { name: "Générer 5 publications" }).click();
+  await expect(page.getByText("Proposition 5", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Envoyer en validation" }).click();
+
+  await page.getByRole("link", { name: "Aujourd’hui" }).click();
+  await expect(page.getByRole("heading", { name: /publication.* vous attend/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Commencer" })).toBeVisible();
 });
